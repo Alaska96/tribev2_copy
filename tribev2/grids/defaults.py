@@ -8,16 +8,16 @@
 import os
 from pathlib import Path
 
-PROJECT_NAME = "tribe_release"
+PROJECT_NAME = "tribe_v2_baseline"
 
 SLURM_PARTITION = os.getenv("SLURM_PARTITION", "")
 SLURM_CONSTRAINT = os.getenv("SLURM_CONSTRAINT", "")
-WANDB_ENTITY = os.getenv("WANDB_ENTITY", "")
-DATADIR = os.getenv("DATAPATH")
-BASEDIR = os.getenv("SAVEPATH")
+WANDB_ENTITY = os.getenv("WANDB_ENTITY", "alaska01-university-of-milan_bicocca")
+DATADIR = "/scratch_share/islab/Chaima/tribe_v1_work_space/Data/CMD_Data"
+BASEDIR = "/scratch_share/islab/Chaima/tribe_v1_work_space"
 CACHEDIR = os.path.join(BASEDIR, "cache", PROJECT_NAME)
 SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)
-N_CPUS = 20
+N_CPUS = 20 # may need to be changed if violates QOS policy
 
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
     Path(path).mkdir(parents=True, exist_ok=True)
