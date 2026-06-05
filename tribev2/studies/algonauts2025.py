@@ -147,8 +147,8 @@ class Algonauts2025(study.Study):
         tl = timeline
         base = (
             self.path
-            / "download/algonauts_2025.competitors/stimuli/transcripts"
-            / tl["task"]
+            / "algonauts_2025.competitors/stimuli/transcripts"
+            / tl["task"] #/ "download/algonauts_2025.competitors/stimuli/transcripts"
         )
         if tl["task"] == "friends":
             return base / f"s{tl['movie'][-1]}/friends_{tl['movie']}{tl['chunk']}.tsv"
@@ -162,8 +162,8 @@ class Algonauts2025(study.Study):
         tl = timeline
         base = (
             self.path
-            / "download/algonauts_2025.competitors/stimuli/movies"
-            / tl["task"]
+            / "algonauts_2025.competitors/stimuli/movies"
+            / tl["task"] #/ "download/algonauts_2025.competitors/stimuli/movies"
         )
         if tl["task"] == "friends":
             return base / f"s{tl['movie'][-1]}/friends_{tl['movie']}{tl['chunk']}.mkv"
@@ -175,8 +175,8 @@ class Algonauts2025(study.Study):
         tl = timeline
         subj_dir = (
             self.path
-            / "download/algonauts_2025.competitors/fmri"
-            / tl["subject"]
+            / "algonauts_2025.competitors/fmri"
+            / tl["subject"] #/ "download/algonauts_2025.competitors/fmri"
             / "func"
         )
         stem = f"{tl['subject']}_task-{tl['task']}_{self._SPACE}_{self._ATLAS}"
