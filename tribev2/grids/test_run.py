@@ -23,7 +23,7 @@ update = {
     "n_epochs": 3,
     "infra.gpus_per_node": 1,
     "infra.mode": "force",
-    "data.study.names": "algonauts_2025.competitors", #"Algonauts2025Bold"
+    "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
 }
 
