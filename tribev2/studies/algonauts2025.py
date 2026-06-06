@@ -297,7 +297,7 @@ class Algonauts2025Bold(Algonauts2025):
             task_str = f"{tl['movie']}{tl['chunk']}"
         else:
             task_str = f"{tl['movie']}{int(tl['chunk']):02d}"
-         subj_dir = self.path / f"{tl['task']}.fmriprep" / tl["subject"]
+        subj_dir = self.path / f"{tl['task']}.fmriprep" / tl["subject"]
         task_pattern = f"*_task-{task_str}_*"
         for session_dir in sorted(subj_dir.iterdir()):
             if not session_dir.name.startswith("ses-"):
