@@ -169,7 +169,7 @@ class Algonauts2025(study.Study):
             return base / f"s{tl['movie'][-1]}/friends_{tl['movie']}{tl['chunk']}.mkv"
         elif tl["task"] == "movie10":
             return base / f"{tl['movie']}/{tl['movie']}{int(tl['chunk']):02d}.mkv"
-        raise ValueError(f"Unknown task: {tl['task']}")
+        raise ValueError(f"Unknown task: {tl['task']}") # may raise error since i have also ood movies --> to be chagned in case
 
     def _get_fmri_filepath(self, timeline: dict[str, tp.Any]) -> Path:
         tl = timeline
@@ -283,7 +283,7 @@ class Algonauts2025Bold(Algonauts2025):
         num_events_in_query=1700,
         event_types_in_query={"Fmri", "Video", "Word", "Text"},
         data_shape=(76, 90, 71, 592),
-        frequency=0.671,
+        frequency=0.671, # 1/1.49s
         fmri_spaces=("T1w", "MNI152NLin2009cAsym"),
     )
 
@@ -297,7 +297,7 @@ class Algonauts2025Bold(Algonauts2025):
             task_str = f"{tl['movie']}{tl['chunk']}"
         else:
             task_str = f"{tl['movie']}{int(tl['chunk']):02d}"
-        subj_dir = self.path / "download" / f"{tl['task']}.fmriprep" / tl["subject"]
+         subj_dir = self.path / f"{tl['task']}.fmriprep" / tl["subject"]#subj_dir = self.path / "download" / f"{tl['task']}.fmriprep" / tl["subject"]
         task_pattern = f"*_task-{task_str}_*"
         for session_dir in sorted(subj_dir.iterdir()):
             if not session_dir.name.startswith("ses-"):
