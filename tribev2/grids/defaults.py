@@ -133,7 +133,7 @@ default_config = {
         "layer_aggregation": "group_mean",
         "study": {
             "names": [
-                "Algonauts2025",# "Algonauts2025Bold"
+                "Algonauts2025",# "Algonauts2025Bold" # algonauts_2025.competitors
                # "Wen2017",
                # "Lahner2024Bold",
                # "Lebel2023Bold",
