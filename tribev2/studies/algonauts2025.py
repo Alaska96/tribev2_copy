@@ -61,7 +61,7 @@ class Algonauts2025(study.Study):
     _FREQUENCY: tp.ClassVar[float] = 1 / 1.49
 
     device: tp.ClassVar[str] = "Fmri"
-    dataset_name: tp.ClassVar[str] = "Algonauts 2025 Challenge"
+    dataset_name: tp.ClassVar[str] =  "algonauts_2025.competitors"#"Algonauts 2025 Challenge"
     url: tp.ClassVar[str] = "https://algonautsproject.com/"
     bibtex: tp.ClassVar[
         str
