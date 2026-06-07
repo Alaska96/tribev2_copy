@@ -23,6 +23,10 @@ update = {
     "n_epochs": 3,
     "infra.gpus_per_node": 1,
     "infra.mode": "force",
+    "data.text_feature.infra.cluster": "processpool",#
+    "data.audio_feature.infra.cluster": "processpool",#
+    "data.video_feature.infra.cluster": "processpool",#
+    "data.neuro.infra.cluster": "processpool",#
     "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
 }
