@@ -25,6 +25,10 @@ update = {
     "infra.mode": "force",
     "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
+    "data.text_feature.infra.cluster": None,
+    "data.audio_feature.infra.cluster": None,
+    "data.video_feature.infra.cluster": None,
+    "data.neuro.infra.cluster": None,
     "data.text_feature.infra.timeout_min": 480,#
     "data.audio_feature.infra.timeout_min": 480,#
     "data.video_feature.infra.timeout_min": 480,#
