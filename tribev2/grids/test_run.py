@@ -31,6 +31,11 @@ update = {
     "data.video_feature.infra.slurm_partition": "ice4hpc",#
     "data.neuro.infra.cluster": "slurm",#
     "data.neuro.infra.slurm_partition": "ice4hpc",#
+
+    "data.text_feature.infra.timeout_min": 480,#
+    "data.audio_feature.infra.timeout_min": 480,#
+    "data.video_feature.infra.timeout_min": 480,#
+    "data.neuro.infra.timeout_min": 480, #
     "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
 }
