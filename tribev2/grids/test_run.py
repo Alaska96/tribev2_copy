@@ -8,6 +8,8 @@
 """
 
 import os
+import torch.multiprocessing as mp #
+mp.set_start_method('spawn', force=True) #
 
 from exca import ConfDict
 
