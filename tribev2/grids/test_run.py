@@ -23,13 +23,14 @@ update = {
     "n_epochs": 3,
     "infra.gpus_per_node": 1,
     "infra.mode": "force",
-    "data.text_feature.infra.cluster": "processpool",#
-    "data.audio_feature.infra.cluster": "processpool",#
-    "data.video_feature.infra.cluster": "processpool",#
-    "data.neuro.infra.cluster": "processpool",#
-    "data.text_feature.infra.max_jobs": 1,#
-    "data.audio_feature.infra.max_jobs": 1,#
-    "data.video_feature.infra.max_jobs": 1,#
+    "data.text_feature.infra.cluster": "slurm",#
+    "data.text_feature.infra.slurm_partition": "ice4hpc",#
+    "data.audio_feature.infra.cluster": "slurm",#
+    "data.audio_feature.infra.slurm_partition": "ice4hpc",#
+    "data.video_feature.infra.cluster": "slurm",#
+    "data.video_feature.infra.slurm_partition": "ice4hpc",#
+    "data.neuro.infra.cluster": "slurm",#
+    "data.neuro.infra.slurm_partition": "ice4hpc",#
     "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
 }
