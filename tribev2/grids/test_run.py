@@ -27,6 +27,9 @@ update = {
     "data.audio_feature.infra.cluster": "processpool",#
     "data.video_feature.infra.cluster": "processpool",#
     "data.neuro.infra.cluster": "processpool",#
+    "data.text_feature.infra.max_jobs": 1,#
+    "data.audio_feature.infra.max_jobs": 1,#
+    "data.video_feature.infra.max_jobs": 1,#
     "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
 }
