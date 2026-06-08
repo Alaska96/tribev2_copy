@@ -10,20 +10,12 @@ from neuraltrain.utils import run_grid
 from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config
 
-GRID_NAME = "cortical"
+GRID_NAME = "tribe_v2_basline_parcelled"
 
 update = {
     "wandb_config.group": GRID_NAME,
-}
-
-grid = {
-    "data.study.names": [
-        "Algonauts2025Bold",
-        "Lahner2024Bold",
-        "Lebel2023Bold",
-        "Wen2017",
-        ["Algonauts2025Bold", "Lahner2024Bold", "Lebel2023Bold", "Wen2017"],
-    ],
+    "data.study.names": "Algonauts2025",
+    "data.neuro.projection": None,
 }
 
 
