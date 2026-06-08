@@ -16,6 +16,8 @@ update = {
     "wandb_config.group": GRID_NAME,
     "data.study.names": "Algonauts2025",
     "data.neuro.projection": None,
+    "data.neuro.infra.folder": None,          # fix fMRI cache warning
+    "infra.slurm_partition": "only-one-gpu", # fix null partition
 }
 
 grid = {
