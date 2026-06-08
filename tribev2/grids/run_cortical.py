@@ -18,6 +18,13 @@ update = {
     "data.neuro.projection": None,
 }
 
+grid = {
+    "data.study.names": [
+        "Algonauts2025",
+       
+        ["Algonauts2025"],
+    ],
+}
 
 if __name__ == "__main__":
     updated_config = ConfDict(mini_config)
@@ -27,6 +34,7 @@ if __name__ == "__main__":
         TribeExperiment,
         GRID_NAME,
         updated_config,
+        grid,
         job_name_keys=["wandb_config.name", "infra.job_name"],
         combinatorial=True,
         overwrite=False,
