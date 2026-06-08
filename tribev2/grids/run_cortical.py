@@ -27,7 +27,6 @@ if __name__ == "__main__":
         TribeExperiment,
         GRID_NAME,
         updated_config,
-        grid,
         job_name_keys=["wandb_config.name", "infra.job_name"],
         combinatorial=True,
         overwrite=False,
