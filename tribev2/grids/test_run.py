@@ -44,8 +44,9 @@ updated_config.update(update)
 
 def test_run(config: dict) -> None:
     task = TribeExperiment(**config)
-    #task.infra.clear_job()
-    task.run()
+    task.infra.clear_job()
+    job = task.infra.job()
+    #task.run()
 
 
 if __name__ == "__main__":
