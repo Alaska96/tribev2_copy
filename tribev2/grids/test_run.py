@@ -8,8 +8,8 @@
 """
 
 import os
-import torch.multiprocessing as mp #
-mp.set_start_method('spawn', force=True) #
+#import torch.multiprocessing as mp #
+#mp.set_start_method('spawn', force=True) #
 
 from exca import ConfDict
 
@@ -17,10 +17,10 @@ from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config
 
 update = {
-    "data.num_workers": 0,
-    "infra.cluster": None,
-    "infra.workdir": None,
-    "wandb_config": None,
+    #"data.num_workers": 0,
+    #"infra.cluster": None,
+    "infra.workdir":"/scratch_share/islab/Chaima/tribe_v2_work_space",
+    #"wandb_config": None,
     "save_checkpoints": False,
     "n_epochs": 3,
     "infra.gpus_per_node": 1,
@@ -28,14 +28,14 @@ update = {
     "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
     "data.neuro.projection": None,
-    "data.text_feature.infra.cluster": None,
-    "data.audio_feature.infra.cluster": None,
-    "data.video_feature.infra.cluster": None,
-    "data.neuro.infra.cluster": None,
-    "data.text_feature.infra.timeout_min": 480,#
-    "data.audio_feature.infra.timeout_min": 480,#
-    "data.video_feature.infra.timeout_min": 480,#
-    "data.neuro.infra.timeout_min": 480,#
+    #"data.text_feature.infra.cluster": None,
+    #"data.audio_feature.infra.cluster": None,
+    #"data.video_feature.infra.cluster": None,
+    #"data.neuro.infra.cluster": None,
+    #"data.text_feature.infra.timeout_min": 480,#
+    #"data.audio_feature.infra.timeout_min": 480,#
+    #"data.video_feature.infra.timeout_min": 480,#
+    #"data.neuro.infra.timeout_min": 480,#
 }
 
 updated_config = ConfDict(mini_config)
