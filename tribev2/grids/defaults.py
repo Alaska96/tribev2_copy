@@ -188,7 +188,7 @@ default_config = {
         "log_model": False,
         "entity": WANDB_ENTITY,
         "project": PROJECT_NAME,
-        "group": "default",
+        "group": "tribe_v2_test_run",
     },
     "brain_model_config": {
         "name": "FmriEncoder",
