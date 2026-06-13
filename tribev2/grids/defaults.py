@@ -114,7 +114,7 @@ default_config = {
         "gpus_per_node": 1,
         "cpus_per_task": N_CPUS,
         "mem_gb": 128,
-        "timeout_min": 60 * 24 * 3,
+        "timeout_min": 60 * 24,
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
         "workdir": None,
