@@ -17,14 +17,14 @@ from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config
 
 update = {
-    #"data.num_workers": 0,
-    "infra.cluster": None,
+    "data.num_workers": 0,
+    #"infra.cluster": None,
     #"infra.workdir":"/scratch_share/islab/Chaima/tribe_v2_work_space",
     #"wandb_config": None,
     "save_checkpoints": False,
     "n_epochs": 3,
     "infra.gpus_per_node": 1,
-    "infra.mode": "force",
+    "infra.mode": "retry",
     "data.study.names": "Algonauts2025", #"Algonauts2025Bold"
     "data.study.transforms.query.query": "subject_timeline_index<3",
     "data.neuro.projection": None,
