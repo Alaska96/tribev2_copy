@@ -15,17 +15,17 @@ GRID_NAME = "tribe_v2_basline_parcelled"
 update = {
     "wandb_config.group": GRID_NAME,
     "data.study.names": "Algonauts2025",
-    "data.neuro.projection": None,
+    #"data.neuro.projection": None,
     "data.neuro.infra.folder": None,  # fix fMRI cache warning
     "data.neuro.infra.cluster": None, 
     "infra.slurm_partition": "only-one-gpu", # fix null partition
     "infra.timeout_min": 60 * 24 * 2,          # 2 days
-    "data.text_feature.infra.slurm_partition": "only-one-gpu",
-    "data.text_feature.infra.timeout_min": 480,
-    "data.audio_feature.infra.slurm_partition": "only-one-gpu",
-    "data.audio_feature.infra.timeout_min": 480,
-    "data.video_feature.infra.slurm_partition": "only-one-gpu",
-    "data.video_feature.infra.timeout_min": 480,
+    #"data.text_feature.infra.slurm_partition": "only-one-gpu",
+    #"data.text_feature.infra.timeout_min": 480,
+    #"data.audio_feature.infra.slurm_partition": "only-one-gpu",
+    #"data.audio_feature.infra.timeout_min": 480,
+    #"data.video_feature.infra.slurm_partition": "only-one-gpu",
+    #"data.video_feature.infra.timeout_min": 480,
 }
 
 grid = {
@@ -49,5 +49,5 @@ if __name__ == "__main__":
         combinatorial=True,
         overwrite=False,
         dry_run=False,
-        infra_mode="force",
+        infra_mode="retry",#infra_mode="force"
     )
