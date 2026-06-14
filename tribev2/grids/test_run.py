@@ -18,7 +18,7 @@ from .configs import mini_config
 
 update = {
     #"data.num_workers": 0,
-    #"infra.cluster": None,
+    "infra.cluster": None,
     #"infra.workdir":"/scratch_share/islab/Chaima/tribe_v2_work_space",
     #"wandb_config": None,
     "save_checkpoints": False,
