@@ -46,7 +46,7 @@ def test_run(config: dict) -> None:
     task = TribeExperiment(**config)
     task.infra.clear_job()
     job = task.infra.job()
-    job.cancel_at_deletion(False
+    job.cancel_at_deletion(False)
     #task.run()
 
 
