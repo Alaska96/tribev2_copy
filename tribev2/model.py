@@ -19,67 +19,69 @@ logger = logging.getLogger(__name__)
 
 
 class TemporalSmoothing(BaseModelConfig):
-    kernel_size: int = 9
-    sigma: float | None = None
-  """ 
-    * Config dataclass for 1D smoohting filter 
+    """ 
+    * Config dataclass for 1D temporal smoohting filter  applied befor the transformer encoder
     * filter size =9
     * sigma=None --> use a uniform box ,esle use the gaussian_kernel_1d
     * This class is used optionally after features combination accross modalities, right befor transformer encoder
   """
-    def build(self, dim: int) -> nn.Module:
-
-        def gaussian_kernel_1d(kernel_size: int, sigma: float):
-            x = torch.arange(kernel_size) - kernel_size // 2
-            kernel = torch.exp(-0.5 * (x / sigma) ** 2)
-            kernel = kernel / kernel.sum()
+    kernel_size: int = 9 # filter size = number of time points in the filter window
+    sigma: float | None = None # if none--> use uniform box filter(learned) ; if set: fixed Guassian filter(frozen) "gaussian_kernel_1d"
+  
+    def build(self, dim: int) -> nn.Module:#builds a depthwise Conv1d smoothing filter for a feature dimension of size dim
+    
+        def gaussian_kernel_1d(kernel_size: int, sigma: float): # creates centered positions [-4,...,0,...,4] for a size-9 kernel
+            x = torch.arange(kernel_size) - kernel_size // 2  # computes Gaussian bell curve at those positions
+            kernel = torch.exp(-0.5 * (x / sigma) ** 2) # normalizes so weights sum to 1
+            kernel = kernel / kernel.sum() # reshapes to [1, 1, kernel_size] as required by nn.Conv1d
             return kernel.view(1, 1, -1)
-
+        # depthwise Conv1d: each channel filtered independently (groups=dim)
         conv = nn.Conv1d(
             dim,
             dim,
             kernel_size=self.kernel_size,
-            padding=self.kernel_size // 2,
-            bias=False,
+            padding=self.kernel_size // 2, #keeps time dimension length unchanged
+            bias=False,# smoothing should not shift values
             groups=dim,
         )
-        if self.sigma is not None:
-            kernel = gaussian_kernel_1d(kernel_size=self.kernel_size, sigma=self.sigma)
+        if self.sigma is not None: # build fixed Gaussian kernel and assign to conv weights
+            kernel = gaussian_kernel_1d(kernel_size=self.kernel_size, sigma=self.sigma) # repeat kernel for each channel: [1,1,k] -> [dim,1,k]
             kernel = kernel.repeat(dim, 1, 1)
             conv.weight.data = kernel
-            conv.requires_grad = False
+            conv.requires_grad = False # freeze: Gaussian kernel is not learned
         return conv
 
 
 class FmriEncoder(BaseModelConfig):
     """
-       * Configuration class for Fmriencoder
-       * Porject each brain modality into a shared dimension
-       * Combine them into one vector
-       * Encode with the transformer
-      
+       * Configuration class for FmriencoderModel
+       * Defines the configuration for  the full trainable  data preprocessing & encoding pipeline: project each modality -> combine -> encode
     """
 
     # architecture
-    projector: BaseModelConfig = Mlp(norm_layer="layer", activation_layer="gelu") # One MLP per modality ,to project modalities into common linear space
-    combiner: Mlp | None = Mlp(norm_layer="layer", activation_layer="gelu") # learns interaction cross modalities per time step level(on the features dimension only) befor feeding transformer   (I dont remember that this was in the desing they shared in the paper)??????????????????
-    encoder: TransformerEncoder | None = TransformerEncoder() # learns temporal dependencies between the contexualized multimodal embeddings 
+    projector: BaseModelConfig = Mlp(norm_layer="layer", activation_layer="gelu") # One MLP projector per modality ,to project modalities into a shared hidden-dimentional space
+    combiner: Mlp | None = Mlp(norm_layer="layer", activation_layer="gelu") # single MLP applied after corss modal aggregation,learns cross-modal interaction per time step (at features dimension only) before feeding transformer   (I don't remember that this was in the desing they shared in the paper)??????????????????
+    encoder: TransformerEncoder | None = TransformerEncoder() # transformer that learns temporal dependencies accross the contexualized multimodal embeddings 
     # other hyperparameters 
-    time_pos_embedding: bool = True # add learnable position embedding along with time axis so that the transformer knows which timepoint is which 
-    subject_embedding: bool = False # add per subject bias vector 
-    subject_layers: SubjectLayers | None = SubjectLayers() # subject_specific linear layers for the final prediction head , allowing per subject outout adaptation
-    hidden: int = 256 #?????????????????????
-    max_seq_len: int = 1024 # per modality embeddings length?????????
-    dropout: float = 0.0  # ????????????????????
-    extractor_aggregation: tp.Literal["stack", "sum", "cat"] = "cat" # different methods to merge features from different  modalities along time axis ???
-    layer_aggregation: tp.Literal["mean", "cat"] = "cat" # how to merge features accross neural nework layers(extractor layers) of same modality ???
-    linear_baseline: bool = False # if set to True--> the transformer will be entirely skipped , considering only liear model(subject linear layers)
-    # Regularization during training to prevent overfitting
-    modality_dropout: float = 0.0 # per sample probability of not considering a modality
-    temporal_dropout: float = 0.0 # per sample probability of not considering a time step
-    low_rank_head: int | None = None # optional bottleneck before the output head:compress hidden--> low_rank_head then predict
-    temporal_smoothing: TemporalSmoothing | None = None # Optionally apply the smoothing filter defined above and before the transformer
+    time_pos_embedding: bool = True # if True--> add learnable positional embeddings along  time axis so that the transformer knows which timepoint is which 
+    subject_embedding: bool = False # if True--> add per subject bias vector to embeddings before the transformer
+    subject_layers: SubjectLayers | None = SubjectLayers() # subject-specific linear layers in the prediction head , allowing per subject outout adaptation
+    hidden: int = 256 # feature vector size(embedding size)
+    max_seq_len: int = 1024 # maximum number of time poitnts supported by the positional embedding table
+    dropout: float = 0.0  # single dropout rate , propagated to projector MLPs and transfromer sub-components(attention, feedforward,layer dropout)
+    extractor_aggregation: tp.Literal["stack", "sum", "cat"] = "cat" # different methods to apply cross-modal aggregration[cat=concatenate along feature axis, sum=element-wise addition, stack=concatenate along time axis] 
+    layer_aggregation: tp.Literal["mean", "cat"] = "cat" # different methods to apply per modality  feature aggreagation (Extractor layer aggregation)[ mean=average across layers, cat=concatenate along feature axis]
+    linear_baseline: bool = False # if True--> skip the transformer entirely, only subject-specific linear layers are used (for ablation)
+    # regularization during training
+    modality_dropout: float = 0.0 # per sample probability of not considering a modality(zeroing out an entire modality during training)
+    temporal_dropout: float = 0.0 # per sample probability of not considering  time steps(zeroing out individual time steps during training)
+    low_rank_head: int | None = None # if set --> bottleneck before the output head:compress hidden--> low_rank_head then predict [adds a bottleneck linear layer (hidden -> low_rank_head) before the prediction head to reduce parameter count]
+    temporal_smoothing: TemporalSmoothing | None = None #if set: apply 1D smoothing filter to embeddings before the transformer
     def model_post_init(self, __context):
+        """
+        * Pydantic post-init hook called automatically after config creation
+        * propagates the single dropout value to all sub-components so it only needs to be set once
+        """
         if self.encoder is not None:
             for key in ["attn_dropout", "ff_dropout", "layer_dropout"]:
                 setattr(self.encoder, key, self.dropout)
@@ -87,7 +89,8 @@ class FmriEncoder(BaseModelConfig):
             self.projector.dropout = self.dropout
         return super().model_post_init(__context)
 
-    def build(
+    def build(# factory method: given data shape info, instantiates the actual nn.Module
+    
         self, feature_dims: dict[int], n_outputs: int, n_output_timesteps: int
     ) -> nn.Module:
         return FmriEncoderModel(
@@ -100,26 +103,30 @@ class FmriEncoder(BaseModelConfig):
 
 class FmriEncoderModel(nn.Module):
    """
-   * The main Encoder model
-   * Uses configuration set in the configuration class FmriEncoder
+    * The actual PyTorch model built from FmriEncoder config
+    * Implements the full forward pass: feature aggregation -> smoothing -> combiner -> transformer -> prediction
    """
     def __init__( # construction phase no data flows yet 
         self,
-        feature_dims: dict[str, tuple[int, int]],
-        n_outputs: int,
-        n_output_timesteps: int,
+        feature_dims: dict[str, tuple[int, int]], # # {modality_name: (num_layers, feature_dim)} — extractor output shape per modality
+        n_outputs: int, # number of brain output units (vertices or voxels) to predict
+        n_output_timesteps: int, # target number of output time steps after pooling the transformer output, to align with fMRI acquisition frequency
         config: FmriEncoder,
     ):
         super().__init__()
         self.config = config
-        self.feature_dims = feature_dims # per modality or multimodel featues?
+        self.feature_dims = feature_dims # per modality or multimodel featues? # per-modality dictionary describing extractor output shapes
         self.n_outputs = n_outputs # for Fmri projector?--> yes for the predictor
-        self.n_output_timesteps = n_output_timesteps # transformer's output frequency ?
-        self.projectors = nn.ModuleDict() # dictionary to hold results of modalities projection?
-        self.pooler = nn.AdaptiveAvgPool1d(n_output_timesteps) # applied on the transformers output to resample stimuli to match fmri frequency
+        self.n_output_timesteps = n_output_timesteps # transformer's output number after pooling
+        self.projectors = nn.ModuleDict() # holds one MLP projector per modality, registered as PyTorch submodules
+        self.pooler = nn.AdaptiveAvgPool1d(n_output_timesteps) # applys resampling  on the transformer's output along time axis to match fMRI frequency
         hidden = config.hidden # the size of the embedding after going throught the preprocessing phase and is ready to be fed to the transformer 
         # the feature_dims below? is a dictionary passed when building the model . keys are modalities names("text", "audio", "video"). values are tuples (num_layers, feature_dim) describing the extractor output shape.
-        for modality, tup in feature_dims.items(): #this loop, iterates along modalities time series [Lm,Dm] and passes them through: per modality layer agregation--> per modality linear projection and dim reduction 
+        for modality, tup in feature_dims.items():
+            """
+            *  Per-modality projector construction 
+            * iterates over modalities, applies layer aggregation logic, and builds one MLP projector per modality
+            """
             #modality — the current modality name, e.g. "text".
             #tup — the value for that modality, e.g. (32, 2048) for Llama with 32 layers and dim 2048. Can be None if that modality has no data.
             #num_layers — L, number of extractor layers for this modality.
@@ -184,7 +191,7 @@ class FmriEncoderModel(nn.Module):
 
     def forward(self, batch: SegmentData, pool_outputs: bool = True) -> torch.Tensor: # forward pass --> puts all pieces together
         x = self.aggregate_features(batch)  # B, T, H # this encapsulates all the embeddings prepocessing pipline and return embeddings of size = hidden ready to be fed to the transformer
-        subject_id = batch.data.get("subject_id", None) #???
+        subject_id = batch.data.get("subject_id", None) # get traget subject id of
         if hasattr(self, "temporal_smoothing"): # temporal smoothing befor transformer, why?
             x = self.temporal_smoothing(x.transpose(1, 2)).transpose(1, 2)
         if not self.config.linear_baseline: # When it is chosen that the transformer is not to be skipped
@@ -199,7 +206,7 @@ class FmriEncoderModel(nn.Module):
             out = x
         return out
 
-    def aggregate_features(self, batch):
+    def aggregate_features(self, batch): # iterates over the batch data applying preprocessing to get embeddings at needed state to be passed to the transformer encoder [ note that the combiner step is included in the transformer forward function below
         tensors = []
         # get B, T
         for modality in batch.data.keys():
@@ -234,23 +241,24 @@ class FmriEncoderModel(nn.Module):
                     mask = torch.rand(data.shape[0]) < self.config.modality_dropout
                     data[mask, :] = torch.zeros_like(data[mask, :])
             tensors.append(data)
+        # Apply cross_modal aggregation
         if self.config.extractor_aggregation == "stack":
             out = torch.cat(tensors, dim=1)
         elif self.config.extractor_aggregation == "cat":
             out = torch.cat(tensors, dim=-1)
         elif self.config.extractor_aggregation == "sum":
             out = sum(tensors)
-        if self.config.temporal_dropout > 0 and self.training:
+        if self.config.temporal_dropout > 0 and self.training: # time points dropout
             for batch_idx in range(out.shape[0]):
                 mask = torch.rand(out.shape[1]) < self.config.temporal_dropout
                 out[batch_idx, mask, :] = torch.zeros_like(out[batch_idx, mask, :])
         return out
 
-    def transformer_forward(self, x, subject_id=None):
-        x = self.combiner(x)
-        if hasattr(self, "time_pos_embed"):
+    def transformer_forward(self, x, subject_id=None): # forward for the transformer encoder only
+        x = self.combiner(x)  # the cross_modal combination is performed here rigth before passing x to the the transformer
+        if hasattr(self, "time_pos_embed"): # add positional embedding
             x = x + self.time_pos_embed[:, : x.size(1)]
-        if hasattr(self, "subject_embed"):
+        if hasattr(self, "subject_embed"): # add subject embedding
             x = x + self.subject_embed(subject_id)
-        x = self.encoder(x)
+        x = self.encoder(x) # transformer encoder 
         return x
