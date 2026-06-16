@@ -4,7 +4,15 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Custom lightning module that wraps a pytorch model.
+""" This script contains
+* Wraps model.py inside a PyTorch Lightning module that handles everything around training:
+  - how to run a training step
+  - how to run validation and test steps
+  - how to compute and log the loss
+  - how to compute and log metrics
+  - how to configure the optimizer
+  - how to handle epoch endings
+
 """
 
 import typing as tp
@@ -55,7 +63,7 @@ class BrainModule(pl.LightningModule):
         self, batch: SegmentData, batch_idx, step_name, dataloader_idx: int = 0
     ):
         y_true = batch.data["fmri"]  # B, D, T
-        y_pred = self.forward(batch)  # B, D, T # forward () of FmriEncoderModel in model.py?
+        y_pred = self.forward(batch)  # B, D, T # forward () of FmriEncoderModel in model.py
         if step_name == "val":
             y_true = y_true[:, :, self.config["data.overlap_trs_val"] :]
             y_pred = y_pred[:, :, self.config["data.overlap_trs_val"] :]
