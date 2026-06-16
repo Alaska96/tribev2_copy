@@ -57,9 +57,9 @@ LOGGER.setLevel(logging.INFO)
 
 
 def _free_extractor_model(extractor: ns.extractors.BaseExtractor) -> None:
-    """Delete cached GPU model from an extractor after its features are cached.
-
-    Extractors lazily load models onto GPU during ``prepare`` and keep them
+    """
+    * Delete cached GPU model from an extractor after its features are cached.
+    * Extractors lazily load models onto GPU during ``prepare`` and keep them
     in ``_model``.  Since results are persisted to disk, the model is no
     longer needed afterwards and this frees VRAM for subsequent extractors.
     """
