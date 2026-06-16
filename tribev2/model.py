@@ -268,7 +268,7 @@ class FmriEncoderModel(nn.Module):
         return out
 
     def transformer_forward(self, x, subject_id=None): # forward for the transformer encoder only
-        x = self.combiner(x)  # the cross_modal combination is performed here rigth before passing x to the the transformer
+        x = self.combiner(x)  # the cross_modal combination is performed here right before passing x to the the transformer
         if hasattr(self, "time_pos_embed"): # add positional embedding
             x = x + self.time_pos_embed[:, : x.size(1)]
         if hasattr(self, "subject_embed"): # add subject embedding
