@@ -22,7 +22,7 @@ from neuralset.events.transforms import EventsTransform
 from neuralset.events.transforms.utils import DeterministicSplitter
 from tqdm import tqdm
 
-SPLIT_ATTRIBUTES = {
+SPLIT_ATTRIBUTES = { # this dictionary is used to define the attribute name based on which splitting will be applied ,according to the study charactiristics
     "Algonauts2025Bold": "chunk",
     "Algonauts2025": "chunk",
     "Lebel2023Bold": "task",
@@ -37,16 +37,16 @@ SPLIT_ATTRIBUTES = {
 
 
 def assign_splits(
-    events: pd.DataFrame, splitter: tp.Callable[str, str]
+    events: pd.DataFrame, splitter: tp.Callable[str, str] # events: dataframe of events of one study
 ) -> pd.DataFrame:
-    assert events.study.nunique() == 1, "Only one study can be assigned at a time"
-    study_name = events.study.unique()[0]
-    split_by = SPLIT_ATTRIBUTES[study_name]
-    events["split_attr"] = events[split_by].astype(str)
-    values = events["split_attr"].unique()
+    assert events.study.nunique() == 1, "Only one study can be assigned at a time" # make sure that one study is conisdered a time, to not mix different studies splitting , i think this also ensures fair splitting among all studies?
+    study_name = events.study.unique()[0]  # double check of uniqueness of the study in the input dataframe of events
+    split_by = SPLIT_ATTRIBUTES[study_name]  # each study has different attribute name that is used for splitting eg. for algonauts ="Chunck"
+    events["split_attr"] = events[split_by].astype(str) # add the split attribute to the events dataframe 
+    values = events["split_attr"].unique() # check the split attribute is unique to all events of same study
     # check that all rows have split attr assigned
-    unassigned_event_types = events[events.split_attr.isna()].type.unique().tolist()
-    if len(unassigned_event_types) > 0:
+    unassigned_event_types = events[events.split_attr.isna()].type.unique().tolist() # extractes events with unassigned split attribute
+    if len(unassigned_event_types) > 0: #hanldes  unassigned events  
         msg = f"Study {study_name}: The following events do not have a split assigned and will be removed: {unassigned_event_types}"
         if any(
             [
@@ -58,18 +58,17 @@ def assign_splits(
         else:
             events = events[~events.type.isin(unassigned_event_types)]
             warnings.warn(msg)
-    splits = [splitter(value) for value in values]
-    if splits and "val" not in splits:
+    splits = [splitter(value) for value in values]  # assign spilt name to each chunck
+    if splits and "val" not in splits: # assert that at least one chunk is associated to the val set
         splits[-1] = "val"  # need at least one val split
-    val_to_split = dict(zip(values, splits))
-    events["split"] = events["split_attr"].map(val_to_split)
-    return events
+    val_to_split = dict(zip(values, splits)) # couple chuncks with the associated split name as save in val_to_split_dict
+    events["split"] = events["split_attr"].map(val_to_split) # add new column to events dataframe, named "split" and pour val_to_split_dict into it 
+    return events # return the updated events dataframe which contains 2 new added columns "split_attr" :the variable based on which the spliting is made and "split": the name of assigned split
 
-
-class SplitEvents(EventsTransform):
+class SplitEvents(EventsTransform): # this class handles the overall splitting of all studies together 
     val_ratio: float
 
-    def _run(self, events: pd.DataFrame) -> pd.DataFrame:
+    def _run(self, events: pd.DataFrame) -> pd.DataFrame: # takes the dataframe of events coming from all studies and loops over the studies applying the "assign_splits" on one study a time 
 
         splitter = DeterministicSplitter(
             ratios={"train": 1 - self.val_ratio, "val": self.val_ratio}, seed=42
@@ -80,7 +79,7 @@ class SplitEvents(EventsTransform):
             tmp.append(study_events)
         events = pd.concat(tmp)
 
-        return events
+        return events # dataframe of events from all studies with the assigned split name
 
 
 class ExtractWordsFromAudio(EventsTransform):
@@ -265,7 +264,7 @@ class CreateVideosFromImages(EventsTransform):
         return events.reset_index(drop=True)
 
 
-class RemoveDuplicates(EventsTransform):
+class RemoveDuplicates(EventsTransform):# removes redundant events from dataframe
     subset: str | tp.Sequence[str] = "filepath"
 
     def _run(self, events: pd.DataFrame) -> pd.DataFrame:
