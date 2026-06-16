@@ -55,7 +55,7 @@ class BrainModule(pl.LightningModule):
         self, batch: SegmentData, batch_idx, step_name, dataloader_idx: int = 0
     ):
         y_true = batch.data["fmri"]  # B, D, T
-        y_pred = self.forward(batch)  # B, D, T
+        y_pred = self.forward(batch)  # B, D, T # forward () of FmriEncoderModel in model.py?
         if step_name == "val":
             y_true = y_true[:, :, self.config["data.overlap_trs_val"] :]
             y_pred = y_pred[:, :, self.config["data.overlap_trs_val"] :]
