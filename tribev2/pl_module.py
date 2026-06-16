@@ -4,7 +4,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-""" This script contains
+""" This script is the training wrapper
 * Wraps model.py inside a PyTorch Lightning module that handles everything around training:
   - how to run a training step
   - how to run validation and test steps
