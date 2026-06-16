@@ -3,7 +3,10 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
-
+"""
+* This script defines the architecture and forward pass for one single batch of data [ How is prediction for one batch of data performed?]
+* Data preprocessing pipline afte the extractors phase
+"""
 import logging
 import typing as tp
 
