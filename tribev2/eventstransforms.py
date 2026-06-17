@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 from neuralset.events.transforms import EventsTransform
 from neuralset.events.transforms.utils import DeterministicSplitter
 from tqdm import tqdm
-
+""" Train /Val splits assignments ?????????????"""
 SPLIT_ATTRIBUTES = { # this dictionary is used to define the attribute name based on which splitting will be applied ,according to the study charactiristics
     "Algonauts2025Bold": "chunk",
     "Algonauts2025": "chunk",
