@@ -93,30 +93,34 @@ class Data(pydantic.BaseModel):
     video_feature: ns.extractors.BaseExtractor | None = None
     subject_id: ns.extractors.LabelEncoder = ns.extractors.LabelEncoder(
         event_field="subject", allow_missing=True, aggregation="first"
-    )
-    frequency: float | None = None
+    ) # encodes subject indentifiers as integer labels for subject-specific layers
+    frequency: float | None = None # if set: overrides the sampling frequency of all feature extractors
     features_to_use: list[
-        tp.Literal["text", "audio", "video", "image", "context", "flow", "music"]
+        tp.Literal["text", "audio", "video", "image", "context", "flow", "music"]  # which modalities to include in this experiment
     ]
     features_to_mask: list[
-        tp.Literal["text", "audio", "video", "image", "context", "flow", "music"]
+        tp.Literal["text", "audio", "video", "image", "context", "flow", "music"]  # modalities to zero out (masked but still passed through the pipeline)
     ] = []
-    n_layers_to_use: int | None = None
-    layers_to_use: list[float] | None = None
-    layer_aggregation: tp.Literal["group_mean", "mean"] | None = "group_mean"
-    # Dataset
-    duration_trs: int = 40
-    overlap_trs_train: int = 0
-    overlap_trs_val: int | None = None
-    batch_size: int = 64
-    num_workers: int | None = None
-    shuffle_train: bool = True
-    shuffle_val: bool = False
-    stride_drop_incomplete: bool = False
-    split_segments_by_time: bool = False
+    n_layers_to_use: int | None = None    # if set: selects this many evenly spaced layers from the extractor
+    layers_to_use: list[float] | None = None  # if set: selects specific layers by fractional position (0=first, 1=last)
+    layer_aggregation: tp.Literal["group_mean", "mean"] | None = "group_mean" # how to aggregate extractor layers before projection
+    # --- Dataloader settings ---
+    duration_trs: int = 40 # length of each data segment in TRs (fMRI repetition times)
+    overlap_trs_train: int = 0  # number of overlapping TRs between consecutive training segments
+    overlap_trs_val: int | None = None # number of overlapping TRs for validation segments (defaults to train value if None)
+    batch_size: int = 64 # number of segments per batch
+    num_workers: int | None = None # number of parallel workers for data loading
+    shuffle_train: bool = True # whether to shuffle training segments each epoch
+    shuffle_val: bool = False # whether to shuffle validation segments
+    stride_drop_incomplete: bool = False  # if True: drop segments that don't fill the full duration
+    split_segments_by_time: bool = False # if True: split train/val by time position rather than event labels
 
     def model_post_init(self, __context):
+        """
+        * Pydantic post-init hook: propagates layer selection and frequency settings to all active extractors
+        """
         super().model_post_init(__context)
+        # resolve which layers to use: either evenly spaced (n_layers_to_use) or explicit (layers_to_use)
         layers_to_use = None
         if self.n_layers_to_use is not None or self.layers_to_use is not None:
             assert not (
@@ -126,16 +130,19 @@ class Data(pydantic.BaseModel):
                 layers_to_use = np.linspace(0, 1, self.n_layers_to_use).tolist()
             else:
                 layers_to_use = self.layers_to_use
+        # propagate layer selection and aggregation method to each active modality extractor
         for modality in self.features_to_use:
             extractor = getattr(self, f"{modality}_feature")
             if hasattr(extractor, "layers"):
                 setattr(extractor, "layer_aggregation", self.layer_aggregation)
                 if layers_to_use is not None:
                     setattr(extractor, "layers", layers_to_use)
+            # handle nested extractors (e.g. video extractor wrapping an image extractor)
             if hasattr(extractor, "image") and hasattr(extractor.image, "layers"):
                 setattr(extractor.image, "layer_aggregation", self.layer_aggregation)
                 if layers_to_use is not None:
                     setattr(extractor.image, "layers", layers_to_use)
+        # propagate frequency override to all active extractors if set
         if self.frequency is not None:
             for modality in self.features_to_use:
                 extractor = getattr(self, f"{modality}_feature")
@@ -143,13 +150,14 @@ class Data(pydantic.BaseModel):
                     setattr(extractor, "frequency", self.frequency)
 
     @property
-    def TR(self) -> float:
+    def TR(self) -> float:# returns the fMRI repetition time in seconds (inverse of acquisition frequency)
+        
         return 1 / self.neuro.frequency
 
-    def get_events(self) -> pd.DataFrame:
+    def get_events(self) -> pd.DataFrame:# loads and returns the events table (stimulus timings per timeline)
         events = self.study.run()
-        events = events[events.type != "Sentence"]
-
+        events = events[events.type != "Sentence"]# exclude sentence-level events (use word-level instead)
+         # log a summary of events grouped by study, split and type for debugging
         cols = ["index", "subject", "timeline"]
         event_summary = (
             events.reset_index().groupby(["study", "split", "type"])[cols].nunique()
@@ -157,22 +165,27 @@ class Data(pydantic.BaseModel):
         LOGGER.info("Event summary: \n%s", event_summary)
         return events
 
-    def get_loaders(
+    def get_loaders( # builds and returns DataLoaders for train and/or val splits
+
         self,
         events: pd.DataFrame | None = None,
         split_to_build: tp.Literal["train", "val", "all"] | None = None,
     ) -> tuple[dict[str, DataLoader], int]:
 
         if events is None:
-            events = self.get_events()
+            events = self.get_events() # load events if not provided
         else:
-            events = standardize_events(events)
-
+            events = standardize_events(events)  # normalize format if provided externally
+        # collect active feature extractors by modality name
         extractors = {}
         for modality in self.features_to_use:
             extractors[modality] = getattr(self, f"{modality}_feature")
         if "Fmri" in events.type.unique():
-            extractors["fmri"] = self.neuro
+            extractors["fmri"] = self.neuro # add fMRI extractor only if fMRI events exist
+        """
+        * create one dummy CategoricalEvent per timeline to anchor segment extraction
+        * each dummy event spans the full timeline duration and carries split/subject info
+        """
         dummy_events = []
         for timeline_name, timeline in events.groupby("timeline"):
             if "split" in timeline.columns:
@@ -195,8 +208,13 @@ class Data(pydantic.BaseModel):
         events = pd.concat([events, pd.DataFrame(dummy_events)])
         events = standardize_events(events)
 
-        extractors["subject_id"] = self.subject_id
-
+        extractors["subject_id"] = self.subject_id # add subject id encoder as an extractor
+        # remove extractors whose event types are not present in the events table
+        #-------Remove incompatible Extractors -----
+        """
+        * Check the type of events present in the target study --> remove extractors that don't handle any of these events types
+        * Avoid preparing extractors on data they have no events for(else ,it may crash or produce empty/invalide outputs)
+        """
         features_to_remove = set()
         for extractor_name, extractor in extractors.items():
             event_types = EventTypesHelper(extractor.event_types).names
@@ -204,32 +222,38 @@ class Data(pydantic.BaseModel):
                 [event_type in events.type.unique() for event_type in event_types]
             ):
                 features_to_remove.add(extractor_name)
-        for extractor_name in features_to_remove:
+        for extractor_name in features_to_remove: 
             del extractors[extractor_name]
             LOGGER.warning(
                 "Removing extractor %s as there are no corresponding events",
                 extractor_name,
             )
-
+        # prepare each extractor: aligns features to event timings and caches results
         for name, extractor in extractors.items():
+            """
+            * The full events dataframe is passed to all extractors.
+            * Each extractor internally filters for its own relevant event types.
+            """
             LOGGER.info("Preparing extractor: %s", name)
             extractor.prepare(events)
-            _free_extractor_model(extractor)
+            _free_extractor_model(extractor)# free GPU memory after preparation
 
         # Prepare dataloaders
+        
+        # --- Build DataLoaders per split ---
         loaders = {}
         if split_to_build is None:
-            splits = ["train", "val"]
+            splits = ["train", "val"] # build both by default
         else:
             splits = [split_to_build]
         for split in splits:
             LOGGER.info("Building dataloader for split %s", split)
             if split == "all" or self.split_segments_by_time:
-                split_sel = [True] * len(events)
+                split_sel = [True] * len(events)  # use all events
                 shuffle = False
                 overlap_trs = self.overlap_trs_train
             else:
-                split_sel = events.split == split
+                split_sel = events.split == split  # filter events belonging to this split
                 if split not in events.split.unique():
                     shuffle = False
                 else:
@@ -242,13 +266,15 @@ class Data(pydantic.BaseModel):
                     overlap_trs = self.overlap_trs_train
 
             sel = np.array(split_sel)
+             # slice the selected events into fixed-duration overlapping segments
             segments = ns.segments.list_segments(
                 events[sel],
-                triggers=events[sel].type == "CategoricalEvent",
-                stride=(self.duration_trs - overlap_trs) * self.TR,
-                duration=self.duration_trs * self.TR,
+                triggers=events[sel].type == "CategoricalEvent",# segment boundaries defined by dummy events
+                stride=(self.duration_trs - overlap_trs) * self.TR, # step size in seconds between segments
+                duration=self.duration_trs * self.TR, # segment length in seconds
                 stride_drop_incomplete=self.stride_drop_incomplete,
             )
+            # alternative train/val split: divide segments by their time position instead of event labels
             if self.split_segments_by_time:
                 LOGGER.info(f"Total number of segments: {len(segments)}")
                 segments = split_segments_by_time(
@@ -260,10 +286,11 @@ class Data(pydantic.BaseModel):
             if len(segments) == 0:
                 LOGGER.warning("No events found for split %s", split)
                 continue
+            # build PyTorch dataset from segments and extractors
             dataset = ns.dataloader.SegmentDataset(
                 extractors=extractors,
                 segments=segments,
-                remove_incomplete_segments=False,
+                remove_incomplete_segments=False,  # keep partial segments at boundaries
             )
             dataloader = dataset.build_dataloader(
                 shuffle=shuffle,
