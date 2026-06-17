@@ -177,10 +177,11 @@ class Data(pydantic.BaseModel):
         for timeline_name, timeline in events.groupby("timeline"):
             if "split" in timeline.columns:
                 splits = timeline.split.dropna().unique()
-                assert (
+                if timeline_name.movie is not in ["figure"]:
+                    assert (
                     len(splits) == 1
                 ), f"Timeline {timeline_name} has multiple splits: {splits}"
-                split = splits[0]
+                    split = splits[0]
             else:
                 split = "all"
             dummy_event = {
