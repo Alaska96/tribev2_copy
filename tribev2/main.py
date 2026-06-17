@@ -3,6 +3,8 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
+print ("//////////////////////// Hello from main i was triggered "
+)
 
 """Defines the main classes used in the experiment.
 
@@ -175,13 +177,13 @@ class Data(pydantic.BaseModel):
             extractors["fmri"] = self.neuro
         dummy_events = []
         for timeline_name, timeline in events.groupby("timeline"):
+            
             if "split" in timeline.columns:
                 splits = timeline.split.dropna().unique()
-                if timeline_name.movie is not in ["figure"]:
-                    assert (
+                assert (
                     len(splits) == 1
                 ), f"Timeline {timeline_name} has multiple splits: {splits}"
-                    split = splits[0]
+                split = splits[0]
             else:
                 split = "all"
             dummy_event = {
