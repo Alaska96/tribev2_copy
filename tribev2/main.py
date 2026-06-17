@@ -169,7 +169,17 @@ class Data(pydantic.BaseModel):
             events = self.get_events()
         else:
             events = standardize_events(events)
-
+          # --- TEMPORARY DEBUG ---
+        print("Events dataframe shape:", events.shape)
+        print("Columns:", events.columns.tolist())
+        print("Event types:", events.type.unique().tolist())
+        print("Number of unique timelines:", events.timeline.nunique())
+        print("\nSample rows:")
+        print(events.head(20).to_string())
+        print("\nOne timeline example:")
+        example_timeline = events[events.timeline == events.timeline.iloc[0]]
+        print(example_timeline.to_string())
+    # --- END TEMPORARY DEBUG ---
         extractors = {}
         for modality in self.features_to_use:
             extractors[modality] = getattr(self, f"{modality}_feature")
