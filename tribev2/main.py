@@ -191,11 +191,14 @@ class Data(pydantic.BaseModel):
             if "split" in timeline.columns:
                 splits = timeline.split.dropna().unique()
                 if len(splits) > 1:
-                   print(f"BAD: {timeline_name} has splits {splits}")
-                assert (
-                    len(splits) == 1
-                ), f"Timeline {timeline_name} has multiple splits: {splits}"
-                split = splits[0]
+                    split = timeline.split.dropna().mode()[0]
+                    LOGGER.warning(
+                        "Timeline %s has multiple splits %s, assigning to majority: %s",
+                         timeline_name, splits.tolist(), split,
+                    )
+                else:
+                    split = splits[0]
+                
             else:
                 split = "all"
             dummy_event = {
