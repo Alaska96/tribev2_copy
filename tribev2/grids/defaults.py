@@ -87,7 +87,7 @@ for extractor in [
         "keep_in_ram": True,
         "mode": "cached",
         "min_samples_per_job": 1,
-        "max_jobs": 256,
+        "max_jobs": 10,# "max_jobs": 256, hit QOS limit ,violating number of job submissions allowed at once
         "timeout_min": 60 * 12,
         "slurm_partition": SLURM_PARTITION,
     }
