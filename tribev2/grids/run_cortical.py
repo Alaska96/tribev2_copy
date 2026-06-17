@@ -10,7 +10,7 @@ from neuraltrain.utils import run_grid
 from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config
 
-GRID_NAME = "tribe_v2_basline_parcelled"
+GRID_NAME = "tribe_v2_basline_parceled"
 
 update = {
     "wandb_config.group": GRID_NAME,
