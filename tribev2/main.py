@@ -187,7 +187,7 @@ class Data(pydantic.BaseModel):
         * each dummy event spans the full timeline duration and carries split/subject info
         """
         dummy_events = []
-        for timeline_name, timeline in events.groupby("timeline"):
+        for timeline_name, timeline in events.groupby("timeline"): # ************************************************* D8'(post Chain/chunking)
             if "split" in timeline.columns:
                 splits = timeline.split.dropna().unique()
                 assert (
@@ -205,11 +205,11 @@ class Data(pydantic.BaseModel):
                 "subject": timeline.subject.unique()[0],
             }
             dummy_events.append(dummy_event)
-        events = pd.concat([events, pd.DataFrame(dummy_events)])
-        events = standardize_events(events)
+        events = pd.concat([events, pd.DataFrame(dummy_events)]) # ************************************************* D8'
+        events = standardize_events(events) # ************************************************* D8'
 
         extractors["subject_id"] = self.subject_id # add subject id encoder as an extractor
-        # remove extractors whose event types are not present in the events table
+        # remove extractors whose event types are not present in the events table " events types are same as modalities"
         #-------Remove incompatible Extractors -----
         """
         * Check the type of events present in the target study --> remove extractors that don't handle any of these events types
@@ -235,13 +235,14 @@ class Data(pydantic.BaseModel):
             * Each extractor internally filters for its own relevant event types.
             """
             LOGGER.info("Preparing extractor: %s", name)
+            # ******************************************************************************* D9 [pass chuncked data resulted from Chain in MuliStudyLoader in utils.py]
             extractor.prepare(events) # launches feature extraction on data returned from  events = self.get_events() , after adding dummy events : line 208-events = pd.concat([events, pd.DataFrame(dummy_events)])
             _free_extractor_model(extractor)# free GPU memory after feature extraction
 
         # Prepare dataloaders
         
         # --- Build DataLoaders per split --- # train / val spliting ?
-        loaders = {}
+        loaders = {}]
         if split_to_build is None:
             splits = ["train", "val"] # build both by default
         else:
