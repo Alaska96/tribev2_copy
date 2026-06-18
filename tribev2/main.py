@@ -189,22 +189,22 @@ class Data(pydantic.BaseModel):
         for timeline_name, timeline in events.groupby("timeline"):
             
             if "split" in timeline.columns:
-                print("hellooooooooooo from frist case  :if ,"split", in timeline.columns:")
+                print("hellooooooooooo from frist case  :if split in timeline.columns:")
                 splits = timeline.split.dropna().unique()
                 if len(splits) > 1:
-                    print("hellooooooooooo from frist case  :if ,"split", in timeline.columns:if len(splits) > 1:")
+                    print("hellooooooooooo from frist case  :if split in timeline.columns:if len(splits) > 1:")
                     split = timeline.split.dropna().mode()[0]
                     LOGGER.warning(
                         "Timeline %s has multiple splits %s, assigning to majority: %s",
                          timeline_name, splits.tolist(), split,
                     )
                 else:
-                    print("hellooooooooooo from frist case  :if, "split", in timeline.columns:if len(splits) =1:")
+                    print("hellooooooooooo from frist case  :if,split in timeline.columns:if len(splits) =1:")
                     
                     split = splits[0]
                 
             else:
-                print("hellooooooooooo from second case  of  :if ,"split" ,not in timeline.columns:split = all")
+                print("hellooooooooooo from second case  of  :if split not in timeline.columns:split = all")
                 split = "all"
             dummy_event = {
                 "type": "CategoricalEvent",
