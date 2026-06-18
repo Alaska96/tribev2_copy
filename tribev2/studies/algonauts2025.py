@@ -48,12 +48,12 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from neuralset.events import study
+from neuralset.events import study # ******************************* D6 class study is imported
 
 logger = logging.getLogger(__name__)
 
 
-class Algonauts2025(study.Study):
+class Algonauts2025(study.Study): # ******************************** D7 class study is inherited by this specific study to make adjustement based on the study shape and approach design  
     _SUBJECTS: tp.ClassVar[list[str]] = ["sub-01", "sub-02", "sub-03", "sub-05"]
     _TASKS: tp.ClassVar[list[str]] = ["friends", "movie10"]
     _SPACE: tp.ClassVar[str] = "space-MNI152NLin2009cAsym"
@@ -99,7 +99,7 @@ class Algonauts2025(study.Study):
     def _download(self) -> None:
         raise NotImplementedError("Download method not implemented yet")
 
-    def iter_timelines(self) -> tp.Iterator[dict[str, tp.Any]]:
+    def iter_timelines(self) -> tp.Iterator[dict[str, tp.Any]]: # the Algonauts study implements its own logic to handle timelines and deosn't use that of the father class
         for subject in self._SUBJECTS:
             for task in self._TASKS:
                 if task == "friends":
