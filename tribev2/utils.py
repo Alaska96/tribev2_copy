@@ -62,6 +62,11 @@ RECORDING_DURATIONS = {
 
 
 class MultiStudyLoader(EventsBuilder):
+    """
+    * This class defines the firts point of connection of raw datasets with the code Logic
+    * It provides the configuration for preparation and loading of studies untill right before the features exctractors which is the next step
+    * Here studies are chunked and manipulated to be in ready format that extractors expect
+    """
     """Config for loading multiple studies.
     Note that the query and enhancers are shared across all studies.
     For example, setting timeline_index == 0 will select the first timeline of each study.
@@ -77,10 +82,10 @@ class MultiStudyLoader(EventsBuilder):
     def model_post_init(self, log__: tp.Any) -> None:
         super().model_post_init(log__)
         if self.studies_to_include is not None:
-            for name in self.studies_to_include:
+            for name in self.studies_to_include: # check that the names pf all studies to include are presnet in the list of studies names 
                 if name not in self.names:
                     raise ValueError(f"Study {name} not found in {self.names}")
-        self.get_studies()  # run this so that studies are registered (in case _run is cached)
+        self.get_studies()  # run this so that studies are registered (in case _run is cached) # ******************************* D6 this is second place where get.studies() is triggered[ at initialization to load existent cash if any]
 
     @infra_timelines.apply(item_uid=str)
     def dummy(self, items: tp.Iterable[str]) -> tp.Iterator[None]:
@@ -94,11 +99,11 @@ class MultiStudyLoader(EventsBuilder):
         else:
             names = self.names
         for name in names:
-            studies[name] = Study(
-                name=name,
-                path=self.path,
-                query=self.query,
-                infra_timelines=self.infra_timelines,
+            studies[name] = Study(  # ******************************************************************** D5  [Study imported from neuralset.events.study ]
+                name=name,    # ****** target studies names are passed here [ it is of type list, as more than one study can be included]
+                path=self.path, # **** here where dataset path is passed,
+                query=self.query, # **** ???
+                infra_timelines=self.infra_timelines, #***** ???
             )
         return studies
 
@@ -118,7 +123,7 @@ class MultiStudyLoader(EventsBuilder):
 
     def _run(self) -> pd.DataFrame:
         dfs = []
-        for name, study in self.get_studies().items():
+        for name, study in self.get_studies().items(): # ********************************************************* D4 [self.get_studies().items()]
             if (
                 self.studies_to_include is not None
                 and name not in self.studies_to_include
