@@ -86,23 +86,23 @@ for extractor in [
         "folder": CACHEDIR,
         "keep_in_ram": True,
         "mode": "cached",
-        "min_samples_per_job": 1,
-        "max_jobs": 10,# "max_jobs": 256, hit QOS limit ,violating number of job submissions allowed at once
+        "min_samples_per_job": 200,   # was 1
+        "max_jobs": 10,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
         "timeout_min": 60 * 12,
         "slurm_partition": SLURM_PARTITION,
     }
     extractor["infra"]["version"] = "release"
     if extractor["name"] == "FmriExtractor":
-        extractor["infra"]["max_jobs"] = 10 #  extractor["infra"]["max_jobs"] = 1024 --> QOS limit
+        extractor["infra"]["max_jobs"] = 10 #  was 1024 --> QOS limit
     else:
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
     if extractor["name"] == "HuggingFaceVideo":
-        extractor["infra"]["min_samples_per_job"] = 1
-        extractor["infra"]["max_jobs"] = 10  #  extractor["infra"]["max_jobs"] = 1024 --> QOS limit
+        extractor["infra"]["min_samples_per_job"] = 200 ## was 1
+        extractor["infra"]["max_jobs"] = 10  #  was 1024 --> QOS limit
         extractor["infra"]["timeout_min"] = 60 * 24
     if extractor["name"] == "HuggingFaceText":
-        extractor["infra"]["min_samples_per_job"] = 32
+        extractor["infra"]["min_samples_per_job"] = 200   # was 32
     extractor["allow_missing"] = True
     extractor["=replace="] = True
 
