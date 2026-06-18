@@ -82,7 +82,7 @@ def _free_extractor_model(extractor: ns.extractors.BaseExtractor) -> None:
 class Data(pydantic.BaseModel):
     """Handles configuration and creation of DataLoaders from dataset and extractors."""
 
-    model_config = pydantic.ConfigDict(extra="forbid")
+    model_config = pydantic.ConfigDict(extra="forbid") # raises an error if any extra fields are passed that are not defined in the class.
 
     study: MultiStudyLoader # !!!!!!!!!!!!!!!!!!!!!!!1
     # features
