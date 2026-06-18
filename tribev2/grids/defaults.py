@@ -144,7 +144,7 @@ default_config = {
                 "max_jobs": 1024,
                 "version": "final",
             },
-            "transforms": {
+            "transforms": { # *********************************************************** D8' this is the self.transform called in utils.py/ class MuliStudyLoders at function _run() at insctruction line 127:chain = Chain(steps={"study": study, **OrderedDict(self.transforms)})
                 "extractaudio": {"name": "ExtractAudioFromVideo"},
                 "extractwords": {"name": "ExtractWordsFromAudio"},
                 "addtext": {"name": "AddText"},
@@ -173,7 +173,7 @@ default_config = {
                     "infra": {"backend": "Cached", "folder": CACHEDIR},
                 },
                 "query": {"name": "QueryEvents", "query": None},
-                "split": {"name": "SplitEvents", "val_ratio": 0.1},
+                "split": {"name": "SplitEvents", "val_ratio": 0.1}, # ******************************* D8' train/val split ratio
             },
         },
         "neuro": neuro_extractor,
