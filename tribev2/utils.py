@@ -60,7 +60,7 @@ RECORDING_DURATIONS = {
     "Wen2017/subject3": 11.7,
 }
 
-
+## ********************* Start of class Multiloader*************************** ##
 class MultiStudyLoader(EventsBuilder):
     """
     * This class defines the firts point of connection of raw datasets with the code Logic
@@ -74,7 +74,7 @@ class MultiStudyLoader(EventsBuilder):
 
     names: str | list[str]
     path: str | Path
-    transforms: list[EventsTransform] | OrderedDict[str, EventsTransform] | None = None
+    transforms: list[EventsTransform] | OrderedDict[str, EventsTransform] | None = None  # transfroms are passed when study is called ,containg params of how data should be chuncked pre feature extraction
     query: str | None = None
     studies_to_include: list[str] | None = None
     infra_timelines: exca.MapInfra = exca.MapInfra(cluster="processpool", max_jobs=None)
@@ -129,14 +129,14 @@ class MultiStudyLoader(EventsBuilder):
                 and name not in self.studies_to_include
             ):
                 continue
-            chain = Chain(steps={"study": study, **OrderedDict(self.transforms)})
+            chain = Chain(steps={"study": study, **OrderedDict(self.transforms)}) # ********************************* D8 raw data chanking is encapsulated here
             df = chain.run()
             df.loc[:, "study"] = name
             dfs.append(df)
         out = pd.concat(dfs, ignore_index=True)
         return out
 
-
+## ***************** End of class multiloader **********************##
 def split_segments_by_time(
     segments: list[ns.segments.Segment], val_ratio: float, split: str
 ) -> list[ns.segments.Segment]:
