@@ -102,7 +102,7 @@ for extractor in [
         extractor["infra"]["max_jobs"] = 10     # was 1024
         extractor["infra"]["timeout_min"] = 60 * 24
     if extractor["name"] == "HuggingFaceText":
-        extractor["infra"]["min_samples_per_job"] = 32
+        extractor["infra"]["min_samples_per_job"] = 160 # was 32
     extractor["allow_missing"] = True
     extractor["=replace="] = True
 
