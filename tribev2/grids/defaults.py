@@ -93,13 +93,13 @@ for extractor in [
     }
     extractor["infra"]["version"] = "release"
     if extractor["name"] == "FmriExtractor":
-        extractor["infra"]["max_jobs"] = 1024
+        extractor["infra"]["max_jobs"] = 10     # was 1024
     else:
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
     if extractor["name"] == "HuggingFaceVideo":
         extractor["infra"]["min_samples_per_job"] = 1
-        extractor["infra"]["max_jobs"] = 1024
+        extractor["infra"]["max_jobs"] = 10     # was 1024
         extractor["infra"]["timeout_min"] = 60 * 24
     if extractor["name"] == "HuggingFaceText":
         extractor["infra"]["min_samples_per_job"] = 32
@@ -141,7 +141,7 @@ default_config = {
                 "folder": CACHEDIR,
                 "timeout_min": 60 * 12,
                 "min_samples_per_job": 4,
-                "max_jobs": 1024,
+                "max_jobs": 10, # was 1024
                 "version": "final",
             },
             "transforms": { # *********************************************************** D8' this is the self.transform called in utils.py/ class MuliStudyLoders at function _run() at insctruction line 127:chain = Chain(steps={"study": study, **OrderedDict(self.transforms)})
