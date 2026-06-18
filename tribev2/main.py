@@ -154,7 +154,7 @@ class Data(pydantic.BaseModel):
         
         return 1 / self.neuro.frequency
 
-    def get_events(self) -> pd.DataFrame:# loads and returns the events table (stimulus timings per timeline)
+    def get_events(self) -> pd.DataFrame:# loads and returns the events table (stimuli timings per timeline)
         events = self.study.run() # study.run() # *************************************************************************** D3 (study is of type : class  MultiStudyLoader) [ study.run() function is inherited from class father EventsStudyBuidler and the child class MultiStudyLoader overrides it ][ Note that class MultiStudyLoader is defined on tribev2/utils.py] 
         events = events[events.type != "Sentence"]# exclude sentence-level events (use word-level instead)
          # log a summary of events grouped by study, split and type for debugging
@@ -165,7 +165,7 @@ class Data(pydantic.BaseModel):
         LOGGER.info("Event summary: \n%s", event_summary)
         return events
 
-    def get_loaders( # builds and returns DataLoaders for train and/or val splits # this the first connection point with data ,triggred in TribeExperiment run()
+    def get_loaders( # builds and returns DataLoaders for train and/or val splits # this the first higher connection point with data ,triggred in TribeExperiment run()
          
         self,
         events: pd.DataFrame | None = None,
@@ -235,12 +235,12 @@ class Data(pydantic.BaseModel):
             * Each extractor internally filters for its own relevant event types.
             """
             LOGGER.info("Preparing extractor: %s", name)
-            extractor.prepare(events)
-            _free_extractor_model(extractor)# free GPU memory after preparation
+            extractor.prepare(events) # launches feature extraction on data returned from  events = self.get_events() , after adding dummy events : line 208-events = pd.concat([events, pd.DataFrame(dummy_events)])
+            _free_extractor_model(extractor)# free GPU memory after feature extraction
 
         # Prepare dataloaders
         
-        # --- Build DataLoaders per split ---
+        # --- Build DataLoaders per split --- # train / val spliting ?
         loaders = {}
         if split_to_build is None:
             splits = ["train", "val"] # build both by default
@@ -253,7 +253,7 @@ class Data(pydantic.BaseModel):
                 shuffle = False
                 overlap_trs = self.overlap_trs_train
             else:
-                split_sel = events.split == split  # filter events belonging to this split
+                split_sel = events.split == split  # filter the events belonging to this split
                 if split not in events.split.unique():
                     shuffle = False
                 else:
@@ -267,6 +267,7 @@ class Data(pydantic.BaseModel):
 
             sel = np.array(split_sel)
              # slice the selected events into fixed-duration overlapping segments
+             # one sliding window of 100 TRs cut from a timeline [segmentaion right befor the trasnformer and after feature extraction]
             segments = ns.segments.list_segments(
                 events[sel],
                 triggers=events[sel].type == "CategoricalEvent",# segment boundaries defined by dummy events
