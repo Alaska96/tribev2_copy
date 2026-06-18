@@ -84,7 +84,7 @@ class Data(pydantic.BaseModel):
 
     model_config = pydantic.ConfigDict(extra="forbid")
 
-    study: MultiStudyLoader
+    study: MultiStudyLoader # !!!!!!!!!!!!!!!!!!!!!!!1
     # features
     neuro: ns.extractors.BaseExtractor
     text_feature: ns.extractors.BaseExtractor | None = None
@@ -155,7 +155,7 @@ class Data(pydantic.BaseModel):
         return 1 / self.neuro.frequency
 
     def get_events(self) -> pd.DataFrame:# loads and returns the events table (stimulus timings per timeline)
-        events = self.study.run()
+        events = self.study.run() # study.run() # *************************************************************************** D3 (study is of type : class  MultiStudyLoader) [ study.run() function is inherited from class father EventsStudyBuidler and the child class MultiStudyLoader overrides it ][ Note that class MultiStudyLoader is defined on tribev2/utils.py] 
         events = events[events.type != "Sentence"]# exclude sentence-level events (use word-level instead)
          # log a summary of events grouped by study, split and type for debugging
         cols = ["index", "subject", "timeline"]
@@ -165,15 +165,15 @@ class Data(pydantic.BaseModel):
         LOGGER.info("Event summary: \n%s", event_summary)
         return events
 
-    def get_loaders( # builds and returns DataLoaders for train and/or val splits
-
+    def get_loaders( # builds and returns DataLoaders for train and/or val splits # this the first connection point with data ,triggred in TribeExperiment run()
+         
         self,
         events: pd.DataFrame | None = None,
         split_to_build: tp.Literal["train", "val", "all"] | None = None,
     ) -> tuple[dict[str, DataLoader], int]:
 
         if events is None:
-            events = self.get_events() # load events if not provided
+            events = self.get_events() # load events if not provided  # ************************************************* D2 
         else:
             events = standardize_events(events)  # normalize format if provided externally
         # collect active feature extractors by modality name
@@ -667,7 +667,7 @@ class TribeExperiment(BaseExperiment):
             np.random.seed(self.seed)
             torch.manual_seed(self.seed)
 
-        loaders = self.data.get_loaders(
+        loaders = self.data.get_loaders( # ***************************************************************** D1 ( data is of class Data )
             split_to_build="val" if self.test_only else None
         )
         self._setup_trainer(next(iter(loaders.values())))
