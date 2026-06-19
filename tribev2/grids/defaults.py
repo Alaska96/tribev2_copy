@@ -83,7 +83,7 @@ for extractor in [
     extractor["infra"] = {
         "cluster": "slurm",
         "cpus_per_task": 8,
-        "mem_gb": 64, # to avoid default memory assignement for child jobs which got them killed
+        "mem_gb": 64, # to avoid small default memory amount assignement for child jobs which got them killed
         "folder": CACHEDIR,
         "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes, else they will be loaded during training 
         "mode": "cached",
