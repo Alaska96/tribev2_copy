@@ -269,7 +269,7 @@ class Data(pydantic.BaseModel):
             sel = np.array(split_sel)
              # slice the selected events into fixed-duration overlapping segments
              # one sliding window of 100 TRs cut from a timeline [segmentaion right befor the trasnformer and after feature extraction]
-            segments = ns.segments.list_segments(
+            segments = ns.segments.list_segments( # ********************************************** D10 segmentation ou extractors output
                 events[sel],
                 triggers=events[sel].type == "CategoricalEvent",# segment boundaries defined by dummy events
                 stride=(self.duration_trs - overlap_trs) * self.TR, # step size in seconds between segments
