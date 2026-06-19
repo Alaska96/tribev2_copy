@@ -82,25 +82,25 @@ for extractor in [
 ]:
     extractor["infra"] = {
         "cluster": "slurm",
-        "cpus_per_task": 10,
+        "cpus_per_task": 8,
         "folder": CACHEDIR,
         "keep_in_ram": True,
         "mode": "cached",
         "min_samples_per_job": 200,   # was 1
-        "max_jobs": 10,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
-        "timeout_min": 60 * 12,
+        "max_jobs": 8,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
+        "timeout_min": 60 * 12*4,
         "slurm_partition": SLURM_PARTITION,
     }
     extractor["infra"]["version"] = "release"
     if extractor["name"] == "FmriExtractor":
-        extractor["infra"]["max_jobs"] = 10 #  was 1024 --> QOS limit
+        extractor["infra"]["max_jobs"] = 8#  was 1024 --> QOS limit
     else:
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
     if extractor["name"] == "HuggingFaceVideo":
         extractor["infra"]["min_samples_per_job"] = 200 ## was 1
-        extractor["infra"]["max_jobs"] = 10  #  was 1024 --> QOS limit
-        extractor["infra"]["timeout_min"] = 60 * 24
+        extractor["infra"]["max_jobs"] = 8 #  was 1024 --> QOS limit
+        extractor["infra"]["timeout_min"] = 60 * 24*2
     if extractor["name"] == "HuggingFaceText":
         extractor["infra"]["min_samples_per_job"] = 200   # was 32
     extractor["allow_missing"] = True
@@ -114,7 +114,7 @@ default_config = {
         "gpus_per_node": 1,
         "cpus_per_task": N_CPUS,
         "mem_gb": 128,
-        "timeout_min": 60 * 24,
+        "timeout_min": 60 * 24*2,
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
         "workdir": None,
@@ -139,9 +139,9 @@ default_config = {
             "query": None,
             "infra_timelines": {
                 "folder": CACHEDIR,
-                "timeout_min": 60 * 12,
+                "timeout_min": 60 * 12*4,
                 "min_samples_per_job": 4,
-                "max_jobs": 10, # "max_jobs": 1024, QOS limit
+                "max_jobs": 8, # "max_jobs": 1024, QOS limit
                 "version": "final",
             },
             "transforms": {
