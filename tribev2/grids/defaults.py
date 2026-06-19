@@ -85,7 +85,7 @@ for extractor in [
         "cpus_per_task": 8,
         "mem_gb": 64, # to avoid default memory assignement for child jobs which got them killed
         "folder": CACHEDIR,
-        "keep_in_ram": False, # if True ,extracted features will loaded to RAM after each extracti finishes
+        "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes
         "mode": "cached",
         "min_samples_per_job": 100,   # was 1
         "max_jobs": 8,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
