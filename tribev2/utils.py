@@ -127,7 +127,7 @@ class MultiStudyLoader(EventsBuilder):
                 and name not in self.studies_to_include
             ):
                 continue
-            if i==1: print("************** Hello from utils.MultiStudyLoader. _run()/Chain()  D8 "data chunking" *******************")
+            if i==1: print("************** Hello from utils.MultiStudyLoader. _run()/Chain()  D8 data chunking *******************")
             i=2
             chain = Chain(steps={"study": study, **OrderedDict(self.transforms)})
             df = chain.run()
