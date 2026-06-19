@@ -88,6 +88,7 @@ class MultiStudyLoader(EventsBuilder):
             yield None
 
     def get_studies(self) -> dict[str, Chain]:
+        print("************** Hello from utils.MultiStudyLoader.get_studies()  D5 *******************")
         studies = {}
         if isinstance(self.names, str):
             names = [self.names]
@@ -117,13 +118,17 @@ class MultiStudyLoader(EventsBuilder):
         return pd.concat(summaries, ignore_index=True)
 
     def _run(self) -> pd.DataFrame:
+        i=1
         dfs = []
+        print("************** Hello from utils.MultiStudyLoader. _run()/get_studies( ) D4 *******************")
         for name, study in self.get_studies().items():
             if (
                 self.studies_to_include is not None
                 and name not in self.studies_to_include
             ):
                 continue
+            if i==1: print("************** Hello from utils.MultiStudyLoader. _run()/Chain()  D8 "data chunking" *******************")
+            i=2
             chain = Chain(steps={"study": study, **OrderedDict(self.transforms)})
             df = chain.run()
             df.loc[:, "study"] = name
