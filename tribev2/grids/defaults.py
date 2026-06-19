@@ -98,7 +98,7 @@ for extractor in [
     else:
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
-        extractor["device"] = "cuda" # solve the issue of using CPU intead of GPU 
+        #extractor["device"] = "cuda" # solve the issue of using CPU intead of GPU 
     if extractor["name"] == "HuggingFaceVideo":
         extractor["infra"]["min_samples_per_job"] = 100 ## was 1
         extractor["infra"]["max_jobs"] = 8 #  was 1024 --> QOS limit
