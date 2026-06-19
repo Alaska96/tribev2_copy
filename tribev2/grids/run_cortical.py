@@ -20,11 +20,11 @@ update = {
     #"data.neuro.infra.cluster": None, 
     "infra.slurm_partition": "only-one-gpu", # fix null partition
     "infra.timeout_min": 60 * 24 * 2,          # 2 days
-    "data.text_feature.infra.slurm_partition": "only-one-gpu",
-    "data.text_feature.infra.timeout_min": 480,
-    "data.audio_feature.infra.slurm_partition": "only-one-gpu",
+    #"data.text_feature.infra.slurm_partition": "only-one-gpu",
+    #"data.text_feature.infra.timeout_min": 480,
+    #"data.audio_feature.infra.slurm_partition": "only-one-gpu",
     #"data.audio_feature.infra.timeout_min": 480,
-    "data.video_feature.infra.slurm_partition": "only-one-gpu",
+    #"data.video_feature.infra.slurm_partition": "only-one-gpu",
     #"data.video_feature.infra.timeout_min": 480,
 }
 
