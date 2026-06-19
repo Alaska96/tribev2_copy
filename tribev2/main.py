@@ -149,6 +149,7 @@ class Data(pydantic.BaseModel):
         return 1 / self.neuro.frequency
 
     def get_events(self) -> pd.DataFrame:
+        print("************** Hello from Class Data.get_events(), D2 *******************")
         events = self.study.run()
         events = events[events.type != "Sentence"]
 
@@ -164,7 +165,8 @@ class Data(pydantic.BaseModel):
         events: pd.DataFrame | None = None,
         split_to_build: tp.Literal["train", "val", "all"] | None = None,
     ) -> tuple[dict[str, DataLoader], int]:
-
+        print("************** Hello from Class Data.get_loaders(), D1 *******************")
+        loaders = self.data.get_loaders(
         if events is None:
             events = self.get_events()
         else:
@@ -189,22 +191,22 @@ class Data(pydantic.BaseModel):
         for timeline_name, timeline in events.groupby("timeline"):
             
             if "split" in timeline.columns:
-                print("hellooooooooooo from frist case  :if split in timeline.columns:")
+                #print("hellooooooooooo from frist case  :if split in timeline.columns:")
                 splits = timeline.split.dropna().unique()
                 if len(splits) > 1:
-                    print("hellooooooooooo from frist case  :if split in timeline.columns:if len(splits) > 1:")
+                    #print("hellooooooooooo from frist case  :if split in timeline.columns:if len(splits) > 1:")
                     split = timeline.split.dropna().mode()[0]
                     LOGGER.warning(
                         "Timeline %s has multiple splits %s, assigning to majority: %s",
                          timeline_name, splits.tolist(), split,
                     )
                 else:
-                    print("hellooooooooooo from frist case  :if,split in timeline.columns:if len(splits) =1:")
+                    #print("hellooooooooooo from frist case  :if,split in timeline.columns:if len(splits) =1:")
                     
                     split = splits[0]
                 
             else:
-                print("hellooooooooooo from second case  of  :if split not in timeline.columns:split = all")
+                #print("hellooooooooooo from second case  of  :if split not in timeline.columns:split = all")
                 split = "all"
             dummy_event = {
                 "type": "CategoricalEvent",
@@ -233,7 +235,7 @@ class Data(pydantic.BaseModel):
                 "Removing extractor %s as there are no corresponding events",
                 extractor_name,
             )
-
+        print("************** Hello from Class Data.get_loaders()/feature Extraction  D9 *******************")
         for name, extractor in extractors.items():
             LOGGER.info("Preparing extractor: %s", name)
             extractor.prepare(events)
@@ -265,6 +267,7 @@ class Data(pydantic.BaseModel):
                     overlap_trs = self.overlap_trs_train
 
             sel = np.array(split_sel)
+            print("************** Hello from Class Data.get_loaders()/feature segmentation  D10 *******************")
             segments = ns.segments.list_segments(
                 events[sel],
                 triggers=events[sel].type == "CategoricalEvent",
@@ -662,10 +665,11 @@ class TribeExperiment(BaseExperiment):
             pl.seed_everything(self.seed, workers=True)
             np.random.seed(self.seed)
             torch.manual_seed(self.seed)
-
+        print("***************Hello from TribeExperiment Branch D: , right before triggering data.get_loaders*******************")
         loaders = self.data.get_loaders(
             split_to_build="val" if self.test_only else None
         )
+        print("*************** Hello from TribeExperiment Branch M: , right before triggering self._setup_trainer(next(iter(loaders.values())))*******************")
         self._setup_trainer(next(iter(loaders.values())))
 
         if not self.test_only:
