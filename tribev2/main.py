@@ -166,7 +166,6 @@ class Data(pydantic.BaseModel):
         split_to_build: tp.Literal["train", "val", "all"] | None = None,
     ) -> tuple[dict[str, DataLoader], int]:
         print("************** Hello from Class Data.get_loaders(), D1 *******************")
-        loaders = self.data.get_loaders(
         if events is None:
             events = self.get_events()
         else:
