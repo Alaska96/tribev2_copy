@@ -83,10 +83,11 @@ for extractor in [
     extractor["infra"] = {
         "cluster": "slurm",
         "cpus_per_task": 8,
+        "mem_gb": 64, # to avoid default memory assignement for child jobs which got them killed
         "folder": CACHEDIR,
         "keep_in_ram": True,
         "mode": "cached",
-        "min_samples_per_job": 200,   # was 1
+        "min_samples_per_job": 100,   # was 1
         "max_jobs": 8,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
         "timeout_min": 60 * 12*4,
         "slurm_partition": SLURM_PARTITION,
@@ -98,11 +99,11 @@ for extractor in [
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
     if extractor["name"] == "HuggingFaceVideo":
-        extractor["infra"]["min_samples_per_job"] = 200 ## was 1
+        extractor["infra"]["min_samples_per_job"] = 100 ## was 1
         extractor["infra"]["max_jobs"] = 8 #  was 1024 --> QOS limit
         extractor["infra"]["timeout_min"] = 60 * 24*2
     if extractor["name"] == "HuggingFaceText":
-        extractor["infra"]["min_samples_per_job"] = 200   # was 32
+        extractor["infra"]["min_samples_per_job"] = 100   # was 32
     extractor["allow_missing"] = True
     extractor["=replace="] = True
 
