@@ -22,6 +22,13 @@ CUDNN_LIB = "/scratch_share/islab/Chaima/.conda/envs/tribe_v2_env/lib/python3.11
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
     Path(path).mkdir(parents=True, exist_ok=True)
 
+
+NVIDIA_BASE = "/scratch_share/islab/Chaima/.conda/envs/tribe_v2_env/lib/python3.11/site-packages/nvidia"
+NVIDIA_LIBS = ":".join([
+    os.path.join(NVIDIA_BASE, pkg, "lib")
+    for pkg in os.listdir(NVIDIA_BASE)
+    if os.path.isdir(os.path.join(NVIDIA_BASE, pkg, "lib"))
+])
 text_feature = {
     "name": "HuggingFaceText",
     "event_types": "Word",
@@ -84,7 +91,7 @@ for extractor in [
         "cluster": "slurm",
         "cpus_per_task": 8,
         "mem_gb": 64, # to avoid small default memory amount assignement for child jobs which got them killed
-        "slurm_setup": [f"export LD_LIBRARY_PATH={CUDNN_LIB}:$LD_LIBRARY_PATH"],# solves cudnn crash for audio extractor,# prepends tribe_v2_env's cuDNN 9.1 to library search path so it is loaded before the system cuDNN 9.0 (which lacks cudnnGetLibConfig)
+        "slurm_setup": [f"export LD_LIBRARY_PATH={NVIDIA_LIBS}:$LD_LIBRARY_PATH"],# solves cudnn crash for audio extractor,# prepends tribe_v2_env's cuDNN 9.1 to library search path so it is loaded before the system cuDNN 9.0 (which lacks cudnnGetLibConfig)
         "folder": CACHEDIR,
         "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes, else they will be loaded during training 
         "mode": "cached",
