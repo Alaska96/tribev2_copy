@@ -18,7 +18,7 @@ BASEDIR = "/scratch_share/islab/Chaima/tribe_v2_work_space"
 CACHEDIR = os.path.join(BASEDIR, "cache", PROJECT_NAME)
 SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)
 N_CPUS = 20 # may need to be changed if violates QOS policy
-
+CUDNN_LIB = "/scratch_share/islab/Chaima/.conda/envs/tribe_v2_env/lib/python3.11/site-packages/nvidia/cudnn/lib"
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
     Path(path).mkdir(parents=True, exist_ok=True)
 
@@ -84,6 +84,7 @@ for extractor in [
         "cluster": "slurm",
         "cpus_per_task": 8,
         "mem_gb": 64, # to avoid small default memory amount assignement for child jobs which got them killed
+        "slurm_setup": [f"export LD_LIBRARY_PATH={CUDNN_LIB}:$LD_LIBRARY_PATH"],# solves cudnn crash for audio extractor,# prepends tribe_v2_env's cuDNN 9.1 to library search path so it is loaded before the system cuDNN 9.0 (which lacks cudnnGetLibConfig)
         "folder": CACHEDIR,
         "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes, else they will be loaded during training 
         "mode": "cached",
@@ -98,13 +99,13 @@ for extractor in [
     else:
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
-        #extractor["device"] = "cuda" # solve the issue of using CPU intead of GPU 
+        #extractor["device"] = "cuda" # solve the issue of using CPU intead of GPU , alternative solution was to launch run from inside the compute node instead of log in node
     if extractor["name"] == "HuggingFaceVideo":
         extractor["infra"]["min_samples_per_job"] = 100 ## was 1
         extractor["infra"]["max_jobs"] = 8 #  was 1024 --> QOS limit
         extractor["infra"]["timeout_min"] = 60 * 24*2
     if extractor["name"] == "HuggingFaceText":
-        extractor["infra"]["min_samples_per_job"] = 100   # was 32
+        extractor["infra"]["min_samples_per_job"] = 100   # was 32 
     extractor["allow_missing"] = True
     extractor["=replace="] = True
 
