@@ -48,12 +48,13 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from neuralset.events import study
-
+from neuralset.events import study 
+print("# ******************************* D6   algonauts2025.py/importing  study class from neuralset.events ")
 logger = logging.getLogger(__name__)
 
 
 class Algonauts2025(study.Study):
+    print("# ******************************* D7   class Algonauts2025(study.Study) is instantiated  ")
     _SUBJECTS: tp.ClassVar[list[str]] = ["sub-01", "sub-02", "sub-03", "sub-05"]
     _TASKS: tp.ClassVar[list[str]] = ["friends", "movie10"]
     _SPACE: tp.ClassVar[str] = "space-MNI152NLin2009cAsym"
@@ -100,6 +101,7 @@ class Algonauts2025(study.Study):
         raise NotImplementedError("Download method not implemented yet")
 
     def iter_timelines(self) -> tp.Iterator[dict[str, tp.Any]]:
+        print("# ******************************* D7'   class Algonauts2025(study.Study). iter_timelines(self) ")
         for subject in self._SUBJECTS:
             for task in self._TASKS:
                 if task == "friends":
@@ -226,6 +228,7 @@ class Algonauts2025(study.Study):
         return dict(type="Fmri", filepath=info, start=0, frequency=self._FREQUENCY)
 
     def _load_timeline_events(self, timeline: dict[str, tp.Any]) -> pd.DataFrame:
+        print("# ******************************* D7'   class Algonauts2025(study.Study)._load_timeline_events ")
         all_events = []
         if (timeline["task"], timeline["movie"]) != ("friends", "s07"):
             all_events.append(self._get_fmri_event(timeline))
