@@ -208,7 +208,7 @@ class Data(pydantic.BaseModel):
         events = pd.concat([events, pd.DataFrame(dummy_events)]) # ************************************************* D8'
         events = standardize_events(events) # ************************************************* D8'
 
-        extractors["subject_id"] = self.subject_id # add subject id encoder as an extractor
+        extractors["subject_id"] = self.subject_id #????????????????????????????
         # remove extractors whose event types are not present in the events table " events types are same as modalities"
         #-------Remove incompatible Extractors -----
         """
