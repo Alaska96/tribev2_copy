@@ -17,7 +17,7 @@ DATADIR = "/scratch_share/islab/Chaima/tribe_v1_work_space/Data/CMD_Data"
 BASEDIR = "/scratch_share/islab/Chaima/tribe_v2_work_space"
 CACHEDIR = os.path.join(BASEDIR, "cache", PROJECT_NAME)
 SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)
-N_CPUS = 20 # may need to be changed if violates QOS policy
+N_CPUS = 20 # may need to be changed if it violate QOS policy
 CUDNN_LIB = "/scratch_share/islab/Chaima/.conda/envs/tribe_v2_env/lib/python3.11/site-packages/nvidia/cudnn/lib"
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
     Path(path).mkdir(parents=True, exist_ok=True)
