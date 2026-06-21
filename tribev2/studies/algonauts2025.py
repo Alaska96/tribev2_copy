@@ -53,7 +53,7 @@ from neuralset.events import study # ******************************* D6 class st
 logger = logging.getLogger(__name__)
 
 
-class Algonauts2025(study.Study): # ******************************** D7 class study is inherited by this specific study to make adjustement based on the study shape and approach design  
+class Algonauts2025(study.Study): # ******************************** D7 This class inherits from the Study base class and implements dataset-specific logic and adjustments.
     _SUBJECTS: tp.ClassVar[list[str]] = ["sub-01", "sub-02", "sub-03", "sub-05"]
     _TASKS: tp.ClassVar[list[str]] = ["friends", "movie10"]
     _SPACE: tp.ClassVar[str] = "space-MNI152NLin2009cAsym"
