@@ -91,7 +91,7 @@ class Algonauts2025(study.Study): # ******************************** D7 This cla
         num_subjects=4,
         num_events_in_query=1700,
         event_types_in_query={"Fmri", "Video", "Word", "Text"},
-        data_shape=(1000, 592),
+        data_shape=(1000, 592), # Parcellated data
         frequency=0.671,
         fmri_spaces=("custom",),
     )
@@ -282,7 +282,7 @@ class Algonauts2025Bold(Algonauts2025):
         num_subjects=4,
         num_events_in_query=1700,
         event_types_in_query={"Fmri", "Video", "Word", "Text"},
-        data_shape=(76, 90, 71, 592),
+        data_shape=(76, 90, 71, 592), # Voxel level data
         frequency=0.671, # 1/1.49s
         fmri_spaces=("T1w", "MNI152NLin2009cAsym"),
     )
@@ -297,7 +297,7 @@ class Algonauts2025Bold(Algonauts2025):
             task_str = f"{tl['movie']}{tl['chunk']}"
         else:
             task_str = f"{tl['movie']}{int(tl['chunk']):02d}"
-        subj_dir = self.path / "algonauts_2025.competitors"/ f"{tl['task']}.fmriprep" / tl["subject"] # this path is not valid since i dont have the raw fMRI data
+        subj_dir = self.path / "algonauts_2025.competitors"/ f"{tl['task']}.fmriprep" / tl["subject"] # this path is not valid since we dont have the raw fMRI data at voxel level
         task_pattern = f"*_task-{task_str}_*"
         for session_dir in sorted(subj_dir.iterdir()):
             if not session_dir.name.startswith("ses-"):
