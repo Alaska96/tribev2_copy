@@ -529,7 +529,7 @@ class TribeExperiment(BaseExperiment):
                 feature_dims[modality] = None
         if "fmri" in batch.data:  # read from fmri config
             fmri = batch.data["fmri"]
-            n_outputs = fmri.shape[1]
+            n_outputs = fmri.shape[1] # Actual fmri shape 
             for metric in self.metrics:
                 if hasattr(metric, "kwargs") and "num_outputs" in metric.kwargs:
                     metric.kwargs["num_outputs"] = n_outputs
@@ -537,14 +537,14 @@ class TribeExperiment(BaseExperiment):
             if hasattr(self.data.neuro.projection, "mesh"):
                 from neuralset.extractors.neuro import FSAVERAGE_SIZES
 
-                n_outputs = 2 * FSAVERAGE_SIZES[self.data.neuro.projection.mesh]
+                n_outputs = 2 * FSAVERAGE_SIZES[self.data.neuro.projection.mesh] # fallback when there is no fmri date(e.g. s07,for test data with no fmri labels)--> in this case  n_outputs is infered from the projector config .[works only if projector has "mesh" attribute(e.g. SurfaceProjector but not for MaskProjector) 
             else:
                 raise ValueError(
                     f"Could not determine number of outputs for neuro extractor {self.data.neuro}"
                 )
         brain_model = self.brain_model_config.build(
             feature_dims=feature_dims,
-            n_outputs=n_outputs,
+            n_outputs=n_outputs, # determines output layer size according to input fmri shape
             n_output_timesteps=self.data.duration_trs,
         )
         LOGGER.info("Extractor dims: %s", feature_dims)
