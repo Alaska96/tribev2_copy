@@ -74,7 +74,7 @@ neuro_extractor = {
     "offset": 5,
     "frequency": 1,
     "projection": {
-        "name": "SurfaceProjector",
+        "name": "SurfaceProjector",# default projector ,works for run_cortical , but run_subcortical should override it to "MaskPorjector"
         "mesh": "fsaverage5",
         "kind": "ball",
         "radius": 3,
