@@ -126,7 +126,7 @@ def load_mni_mesh(
     return meshes
 
 
-class TribeSurfaceProjector(ns.extractors.neuro.SurfaceProjector):
+class TribeSurfaceProjector(ns.extractors.neuro.SurfaceProjector):# inherited form ns.extractors.neuro.SurfaceProjector -- this allows communication between this class and fmriExtractor(neuroExtractor[e.g. apply projection])
     """Project data to an fsaverage surface mesh.
     For volumetric data, this uses ``nilearn.surface.vol_to_surf`` to project the data to the surface.
     For surface data, this simply downsamples the data to the target mesh resolution.
