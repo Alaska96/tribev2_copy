@@ -88,7 +88,7 @@ class Data(pydantic.BaseModel):
 
     study: MultiStudyLoader
     # features
-    neuro: ns.extractors.BaseExtractor
+    neuro: ns.extractors.BaseExtractor  # point of communication between neuralset and fmriExtractor
     text_feature: ns.extractors.BaseExtractor | None = None
     image_feature: ns.extractors.BaseExtractor | None = None
     audio_feature: ns.extractors.BaseExtractor | None = None
