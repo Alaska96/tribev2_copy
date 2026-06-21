@@ -183,12 +183,12 @@ class Algonauts2025(study.Study): # ******************************** D7 This cla
         suffix = "_desc-s123456_bold.h5" if tl["task"] == "friends" else "_bold.h5"
         return subj_dir / f"{stem}{suffix}"
 
-    def _load_fmri(self, timeline: dict[str, tp.Any]) -> tp.Any:
+    def _load_fmri(self, timeline: dict[str, tp.Any]) -> tp.Any: 
         import h5py
 
         tl = timeline
         fmri_file = self._get_fmri_filepath(timeline)
-        fmri = h5py.File(fmri_file, "r")
+        fmri = h5py.File(fmri_file, "r") #********** 1 fmri
         if tl["task"] == "friends":
             key = f"{tl['movie'][1:]}{tl['chunk']}"
         else:
@@ -208,7 +208,7 @@ class Algonauts2025(study.Study): # ******************************** D7 This cla
         data = fmri[:].astype(np.float32)
         import nibabel
 
-        obj = nibabel.Nifti2Image(data.T, affine=np.eye(4))
+        obj = nibabel.Nifti2Image(data.T, affine=np.eye(4)) #********** 2 fmri
         return obj
 
     def _get_split(self, timeline: dict[str, tp.Any]) -> str:
