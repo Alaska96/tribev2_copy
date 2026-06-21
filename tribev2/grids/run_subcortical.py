@@ -16,7 +16,7 @@ update = {
     "wandb_config.group": GRID_NAME,
     "data.neuro": {
         "projection": {
-            "name": "MaskProjector",
+            "name": "MaskProjector",# overrides the projector of default config( voxel to subcortical_voxel)
             "mask": "subcortical",
             "=replace=": True,
         },
