@@ -3,8 +3,8 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
-print ("//////////////////////// Hello from main i was triggered "
-)
+
+
 
 """Defines the main classes used in the experiment.
 
