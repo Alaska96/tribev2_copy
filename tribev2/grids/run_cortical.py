@@ -15,7 +15,7 @@ GRID_NAME = "tribe_v2_basline_parcelled"
 update = {
     "wandb_config.group": GRID_NAME,
     #"data.study.names": "Algonauts2025",
-    #"data.neuro.projection": None, # skip projection step to use parcellated data instead
+    "data.neuro.projection": None, # skip projection step to use parcellated data instead
     #"data.neuro.infra.folder": None,  # fix fMRI cache warning
     #"data.neuro.infra.cluster": None, 
     #"infra.slurm_partition": "only-one-gpu", # fix null partition
