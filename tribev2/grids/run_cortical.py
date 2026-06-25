@@ -37,5 +37,5 @@ if __name__ == "__main__":
         combinatorial=True,
         overwrite=False,
         dry_run=False,
-        infra_mode="retry", #resubmit crashed jobs considering cashes #infra_mode="force" 
+        infra_mode="retry", #resubmit crashed jobs considering cashes, while for #infra_mode="force" :jobs were cancelled before starting
     )
