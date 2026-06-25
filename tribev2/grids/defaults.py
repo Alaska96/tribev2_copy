@@ -17,7 +17,7 @@ DATADIR = "/scratch_share/islab/Chaima/tribe_v1_work_space/Data/CMD_Data"
 BASEDIR = "/scratch_share/islab/Chaima/tribe_v2_work_space"
 CACHEDIR = os.path.join(BASEDIR, "cache", PROJECT_NAME)
 SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)
-N_CPUS = 20 # may need to be changed if it violate QOS policy
+N_CPUS = 8  #20 # may need to be changed if it violate QOS policy
 
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
     Path(path).mkdir(parents=True, exist_ok=True)
@@ -90,7 +90,7 @@ for extractor in [
         "mode": "cached",
         "min_samples_per_job": 100,   # was 1
         "max_jobs": 8,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
-        "timeout_min": 60 * 12*4,
+        "timeout_min": 60 * 12*4, # 2 days 
         "slurm_partition": SLURM_PARTITION,
     }
     extractor["infra"]["version"] = "release"
