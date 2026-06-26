@@ -65,7 +65,7 @@ neuro_extractor = {
     "name": "FmriExtractor",
     "allow_missing": True,
     "offset": 5,
-    "frequency": 1,
+    "frequency": 1/1.49, # was 1 but put it to 1/1.49 since i will use fMRI at TR=1.49s
     "projection": {
         "name": "SurfaceProjector",# default projector ,works for run_cortical , but run_subcortical should override it to "MaskPorjector"
         "mesh": "fsaverage5",
