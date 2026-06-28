@@ -49,7 +49,7 @@ video_feature = image_feature | {
     "clip_duration": 4,
     "image": {
         "name": "HuggingFaceImage",
-        "model_name": "facebook/vjepa2-vitg-fpc64-256",
+        "model_name": "facebook/vjepa2-vitg-fpc64-256", 
         "infra": {"keep_in_ram": False},
         "layers": [0.75, 1.0],
     },
