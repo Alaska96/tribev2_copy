@@ -86,7 +86,7 @@ class Data(pydantic.BaseModel):
 
     model_config = pydantic.ConfigDict(extra="forbid")
 
-    study: MultiStudyLoader
+    study: MultiStudyLoader # point of communication with MultiStudyLoader class form  tribe2/utils.py
     # features
     neuro: ns.extractors.BaseExtractor  # point of communication between neuralset and fmriExtractor
     text_feature: ns.extractors.BaseExtractor | None = None
