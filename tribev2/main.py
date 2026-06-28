@@ -107,14 +107,14 @@ class Data(pydantic.BaseModel):
     layers_to_use: list[float] | None = None
     layer_aggregation: tp.Literal["group_mean", "mean"] | None = "group_mean"
     # Dataset
-    duration_trs: int = 40
+    duration_trs: int = 40 # this is changed to 100 in the final configs
     overlap_trs_train: int = 0
     overlap_trs_val: int | None = None
     batch_size: int = 64
     num_workers: int | None = None
     shuffle_train: bool = True
     shuffle_val: bool = False
-    stride_drop_incomplete: bool = False
+    stride_drop_incomplete: bool = False # if set to True--> incomplete segments are droped?
     split_segments_by_time: bool = False
 
     def model_post_init(self, __context):
@@ -146,7 +146,7 @@ class Data(pydantic.BaseModel):
 
     @property
     def TR(self) -> float:
-        return 1 / self.neuro.frequency
+        return 1 / self.neuro.frequency  # self.neuro.frequency is the frequency of the neuro extractor[ can be adjusted in the configs in default.py]# for my case self.neuro.frequency= 1/1.49--> TR= 1.49
 
     def get_events(self) -> pd.DataFrame:
         print("************** Hello from Class Data.get_events(), D2 *******************")
@@ -266,13 +266,13 @@ class Data(pydantic.BaseModel):
                     overlap_trs = self.overlap_trs_train
 
             sel = np.array(split_sel)
-            print("************** Hello from Class Data.get_loaders()/feature segmentation  D10 *******************")
+            print("************** Hello from Class Data.get_loaders()/ TR based feature segmentation  D10 *******************")
             segments = ns.segments.list_segments(
                 events[sel],
                 triggers=events[sel].type == "CategoricalEvent",
-                stride=(self.duration_trs - overlap_trs) * self.TR,
-                duration=self.duration_trs * self.TR,
-                stride_drop_incomplete=self.stride_drop_incomplete,
+                stride=(self.duration_trs - overlap_trs) * self.TR,# intersection between  segments, for the default configs: duration_trs=100, overlap_trs=0, TR=1.49s--> no overlap between segments
+                duration=self.duration_trs * self.TR, # segments duration in seconds as function of TR, 
+                stride_drop_incomplete=self.stride_drop_incomplete, # wether to consider segments of length lower than 100 trs 
             )
             if self.split_segments_by_time:
                 LOGGER.info(f"Total number of segments: {len(segments)}")
