@@ -27,14 +27,14 @@ text_feature = {
     "event_types": "Word",
     "model_name": "meta-llama/Llama-3.2-3B",
     "aggregation": "sum",
-    "frequency": 2,
+    "frequency": 2, # One embedding per 0.5s
     "contextualized": True,
     "layers": [0, 0.2, 0.4, 0.6, 0.8, 1.0],
     "batch_size": 4,
 }
 image_feature = {
     "name": "HuggingFaceVideo",
-    "frequency": 2,
+    "frequency": 2,  # One embedding per 0.5s
     "event_types": "Video",
     "aggregation": "sum",
     "image": {
@@ -46,7 +46,7 @@ image_feature = {
     },
 }
 video_feature = image_feature | {
-    "clip_duration": 4,
+    "clip_duration": 4, 
     "image": {
         "name": "HuggingFaceImage",
         "model_name": "facebook/vjepa2-vitg-fpc64-256",
@@ -56,18 +56,18 @@ video_feature = image_feature | {
 }
 audio_feature = {
     "name": "Wav2VecBert",
-    "frequency": 2,
+    "frequency": 2,# One embedding per 0.5s
     "layers": [0.75, 1.0],
     "event_types": "Audio",
-    "aggregation": "sum",
+    "aggregation": "sum", # Note that they didnt use layer averaging as described in paper but applied sum accross all layers 
 }
 neuro_extractor = {
     "name": "FmriExtractor",
     "allow_missing": True,
     "offset": 5,
-    "frequency": 1/1.49, # was 1 but put it to 1/1.49 since i will use fMRI at TR=1.49s
+    "frequency": 1/1.49, # was 1 but put it to 1/1.49 since i will use fMRI at TR=1.49s--> thus neuro_extractor will not apply fMRI resampling 
     "projection": {
-        "name": "SurfaceProjector",# default projector ,works for run_cortical , but run_subcortical should override it to "MaskPorjector"
+        "name": "SurfaceProjector",# default projector ,works for run_cortical , but run_subcortical should override it to "MaskPorjector", and for my pipline i will disable the projector in further steps , since i will not use Algonaut2025Bold study
         "mesh": "fsaverage5",
         "kind": "ball",
         "radius": 3,
@@ -88,7 +88,7 @@ for extractor in [
         "folder": CACHEDIR,
         "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes, else they will be loaded during training 
         "mode": "cached",
-        "min_samples_per_job": 100,   # was 1
+        "min_samples_per_job": 100,   # 
         "max_jobs": 8,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
         "timeout_min": 60 * 12*4, # 2 days 
         "slurm_partition": SLURM_PARTITION,
@@ -106,8 +106,8 @@ for extractor in [
         extractor["infra"]["timeout_min"] = 60 * 24*2
     if extractor["name"] == "HuggingFaceText":
         extractor["infra"]["min_samples_per_job"] = 100   # was 32 
-    extractor["allow_missing"] = True
-    extractor["=replace="] = True
+    extractor["allow_missing"] = True # ??
+    extractor["=replace="] = True # ??
 
 default_config = {
     "infra": {
@@ -123,9 +123,9 @@ default_config = {
         "workdir": None,
     },
     "data": {
-        "frequency": 2,
-        "duration_trs": 100,
-        "overlap_trs_train": 0,
+        "frequency": 2, # 2 embeddings per 1
+        "duration_trs": 100, # segmentation window size in trs
+        "overlap_trs_train": 0, 
         "overlap_trs_val": 0,
         "shuffle_val": True,
         "num_workers": N_CPUS,
