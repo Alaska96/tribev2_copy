@@ -49,7 +49,7 @@ video_feature = image_feature | {
     "clip_duration": 4, 
     "image": {
         "name": "HuggingFaceImage",
-        "model_name": "facebook/vjepa2-vitg-fpc64-256",# facebook/vjepa2-vitg-fpc64-384 
+        "model_name": "facebook/vjepa2-vitg-fpc64-256",# facebook/vjepa2-vitl-fpc64-256
         "infra": {"keep_in_ram": False},
         "layers": [0.75, 1.0],
     },
@@ -59,7 +59,7 @@ audio_feature = {
     "frequency": 2,# One embedding per 0.5s
     "layers": [0.75, 1.0],
     "event_types": "Audio",
-    "aggregation": "sum", # Note that they didnt use layer averaging as described in paper but applied sum accross all layers 
+    "aggregation": "sum", 
 }
 neuro_extractor = {
     "name": "FmriExtractor",
