@@ -2,7 +2,7 @@
 # All rights reserved.
 #
 # This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# LICENSE file in the root directory of this source tree., 
 
 """Default configuration dictionary for TRIBE v2 experiments."""
 import os
@@ -34,7 +34,7 @@ text_feature = {
 }
 image_feature = {
     "name": "HuggingFaceVideo",
-    "frequency": 2,  # One embedding per 0.5s
+    "frequency": 2,  # One embedding per 0.5s #/ iit also represents the read frequency from the 60s chunk
     "event_types": "Video",
     "aggregation": "sum",
     "image": {
@@ -88,7 +88,7 @@ for extractor in [
         "folder": CACHEDIR,
         "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes, else they will be loaded during training 
         "mode": "cached",
-        "min_samples_per_job": 100,   # 
+        "min_samples_per_job": 100,   # min sample assigned to single job
         "max_jobs": 8,# was 256, hit QOS limit ,violating number of job submissions allowed atone go
         "timeout_min": 60 * 12*4, # 2 days 
         "slurm_partition": SLURM_PARTITION,
@@ -106,8 +106,8 @@ for extractor in [
         extractor["infra"]["timeout_min"] = 60 * 24*2
     if extractor["name"] == "HuggingFaceText":
         extractor["infra"]["min_samples_per_job"] = 100   # was 32 
-    extractor["allow_missing"] = True # ??
-    extractor["=replace="] = True # ??
+    extractor["allow_missing"] = True #f some chunks fail or are missing, don't crash, continue with what's available
+    extractor["=replace="] = False # if set to True: tells exca to replace cached results if they exist rather than skipping — forces recomputation
 
 default_config = {
     "infra": {
@@ -128,8 +128,8 @@ default_config = {
         "overlap_trs_train": 0, 
         "overlap_trs_val": 0,
         "shuffle_val": True,
-        "num_workers": N_CPUS,
-        "layers_to_use": [0.5, 0.75, 1.0],
+        "num_workers": N_CPUS,# 
+        "layers_to_use": [0.5, 0.75, 1.0],#for the training phase
         "layer_aggregation": "group_mean",
         "study": {
             "names": [
@@ -140,17 +140,18 @@ default_config = {
             ],
             "path": DATADIR,
             "query": None,
-            "infra_timelines": {
+            "infra_timelines": {#infra config specifically for the timeline/events generation phase (building the events DataFrame), not feature extraction
+
                 "folder": CACHEDIR,
                 "timeout_min": 60 * 12*4,
                 "min_samples_per_job": 4,
                 "max_jobs": 8, # "max_jobs": 1024, QOS limit
                 "version": "final",
             },
-            "transforms": {
-                "extractaudio": {"name": "ExtractAudioFromVideo"},
-                "extractwords": {"name": "ExtractWordsFromAudio"},
-                "addtext": {"name": "AddText"},
+            "transforms": {#pipeline of operations applied to events before extraction — order matters:
+                "extractaudio": {"name": "ExtractAudioFromVideo"},#pulls audio track from video files
+                "extractwords": {"name": "ExtractWordsFromAudio"},# extractwords: transcribes audio to words
+                "addtext": {"name": "AddText"},#addtext/addsentence/addcontext: enriches word events with text context
                 "addsentence": {
                     "name": "AddSentenceToWords",
                     "max_unmatched_ratio": 0.05,
@@ -161,31 +162,31 @@ default_config = {
                     "max_context_len": 1024,
                     "split_field": "",
                 },
-                "removemissing": {"name": "RemoveMissing"},
-                "chunksounds": {
+                "removemissing": {"name": "RemoveMissing"},#drops events with missing data
+                "chunksounds": { #splits long Audio events into 30-60s chunks
                     "name": "ChunkEvents",
                     "event_type_to_chunk": "Audio",
                     "max_duration": 60,
                     "min_duration": 30,
                 },
-                "chunkvideos": {
+                "chunkvideos": {# splits long ideo events into 30-60s chunks
                     "name": "ChunkEvents",
                     "event_type_to_chunk": "Video",
                     "max_duration": 60,
                     "min_duration": 30,
                     "infra": {"backend": "Cached", "folder": CACHEDIR},
                 },
-                "query": {"name": "QueryEvents", "query": None},
-                "split": {"name": "SplitEvents", "val_ratio": 0.1},
+                "query": {"name": "QueryEvents", "query": None},#optional filter to subset events (e.g. only certain subjects or runs) — None means use everything
+                "split": {"name": "SplitEvents", "val_ratio": 0.1},#splits events into train/val sets using val_ratio=0.1 (10% validation). This is a global split applied to all event types consistently — the split labels are stored in the events DataFrame and propagate through the whole pipeline
             },
         },
         "neuro": neuro_extractor,
-        "features_to_use": ["text", "audio", "video"],
+        "features_to_use": ["text", "audio", "video"],# ist of modalities used during training
         "text_feature": text_feature,
         "video_feature": video_feature,
         "audio_feature": audio_feature,
         "image_feature": image_feature,
-        "batch_size": 8,
+        "batch_size": 8, # training batch size — number of fMRI segments per training step
     },
     "wandb_config": {
         "log_model": False,
@@ -195,10 +196,10 @@ default_config = {
     },
     "brain_model_config": {
         "name": "FmriEncoder",
-        "low_rank_head": 2048,
-        "hidden": 1152,
-        "extractor_aggregation": "cat",
-        "layer_aggregation": "cat",
+        "low_rank_head": 2048,# of the transformer encoder
+        "hidden": 1152, # of the transformer encoder
+        "extractor_aggregation": "cat",# how to combine text+audio+video features — concatenate
+        "layer_aggregation": "cat",# how to combine multiple layers from each extractor — concatenate
         "combiner": None,
         "encoder": {
             "depth": 8,
@@ -244,11 +245,11 @@ default_config = {
         },
     },
     "n_epochs": 15,
-    "limit_train_batches": None,
+    "limit_train_batches": None,# if set to e.g. 10, only runs 10 batches per epoch — useful for debugging. None = full dataset
     "patience": None,
     "enable_progress_bar": True,
     "log_every_n_steps": 5,
-    "fast_dev_run": False,
+    "fast_dev_run": False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
     "seed": 33,
 }
 
