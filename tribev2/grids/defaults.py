@@ -83,7 +83,7 @@ for extractor in [
     extractor["infra"] = {
         "cluster": "slurm",
         "cpus_per_task": 8,# Number of CPUs per child job(per extractor)
-        "mem_gb": 16 #64, # to avoid small default memory amount assignement for child jobs which got them killed (to be double checked)
+        "mem_gb": 64, # to avoid small default memory amount assignement for child jobs which got them killed (to be double checked)
         #"slurm_setup": [f"export LD_LIBRARY_PATH={NVIDIA_LIBS}:$LD_LIBRARY_PATH"],# solves cudnn crash for audio extractor,# prepends tribe_v2_env's cuDNN 9.1 to library search path so it is loaded before the system cuDNN 9.0 (which lacks cudnnGetLibConfig)
         "folder": CACHEDIR,
         "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes, else they will be loaded during training 
@@ -185,7 +185,7 @@ default_config = {
         "text_feature": text_feature,
         "video_feature": video_feature,
         "audio_feature": audio_feature,
-        "image_feature": image_feature,
+        "image_feature": image_feature,# defined but never used
         "batch_size": 8, # training batch size — number of fMRI segments per training step
     },
     "wandb_config": {
