@@ -50,7 +50,7 @@ video_feature = image_feature | {
     "image": {
         "name": "HuggingFaceImage",
         "model_name": "facebook/vjepa2-vitg-fpc64-256",# # facebook/vjepa2-vitl-fpc64-256
-        "device": "cuda",
+        "device": "cuda", # !!!!!!!!!! this what solved the video extractor bottelneck
         "infra": {"keep_in_ram": False},
         "layers": [0.75, 1.0],
     },
