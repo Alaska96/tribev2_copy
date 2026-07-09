@@ -118,7 +118,7 @@ default_config = {
         "folder": SAVEDIR,
         "gpus_per_node": 1,
         "cpus_per_task": N_CPUS,
-        "mem_gb": 64, # to be set back to 128 in the train phase
+        "mem_gb": 128, # was 64,set back to 128 in the train phase
         "timeout_min": 60 * 24*2,
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
@@ -187,7 +187,7 @@ default_config = {
         "text_feature": text_feature,
         "video_feature": video_feature,
         "audio_feature": audio_feature,
-        "image_feature": image_feature,# defined but never used
+        "image_feature": image_feature,# defined but never used for Algonaut study at least
         "batch_size": 8, # training batch size — number of fMRI segments per training step
     },
     "wandb_config": {
@@ -207,7 +207,7 @@ default_config = {
             "depth": 8,
         },
         "subject_layers": {"subject_dropout": 0.1},
-        "subject_embedding": False,
+        "subject_embedding": True,# default value was False
         "modality_dropout": 0.3,
     },
     "metrics": [
