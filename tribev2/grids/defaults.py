@@ -122,7 +122,11 @@ default_config = {
         "timeout_min": 60 * 24*2,
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
-        "workdir": None,
+        "workdir": {
+            "copied": ["neuralset", "neuraltrain", "tribev2"],
+            "includes": ["*.py", "*.txt"],
+        },
+       # "workdir": None,
     },
     "data": {
         "frequency": 2, # 2 embeddings per 1
