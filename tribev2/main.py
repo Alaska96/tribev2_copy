@@ -340,7 +340,7 @@ class TribeExperiment(BaseExperiment):
     checkpoint_path: str | None = None
     load_checkpoint: bool = True
     test_only: bool = False
-
+    stop_after_loaders: bool = False # i added it to stop before trainer get triggered to debug
     # Internal properties
     _trainer: tp.Any = None
     _model: tp.Any = None
@@ -668,6 +668,9 @@ class TribeExperiment(BaseExperiment):
         loaders = self.data.get_loaders(
             split_to_build="val" if self.test_only else None
         )
+        if self.stop_after_loaders:
+            LOGGER.info("stop_after_loaders=True — stopping before trainer setup.")
+            return loaders
         print("*************** Hello from TribeExperiment Branch M: , right before triggering self._setup_trainer(next(iter(loaders.values())))*******************")
         self._setup_trainer(next(iter(loaders.values())))
 
