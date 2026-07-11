@@ -10,7 +10,7 @@ from pathlib import Path
 
 PROJECT_NAME = "tribe_v2_baseline"
 
-SLURM_PARTITION = os.getenv("SLURM_PARTITION", "ulow") # to be set back to "only-one-gpu" after fmriextractor , jut to avoid queue
+SLURM_PARTITION = os.getenv("SLURM_PARTITION", "only-one-gpu") # to be set back to "only-one-gpu" after fmriextractor , jut to avoid queue
 SLURM_CONSTRAINT = os.getenv("SLURM_CONSTRAINT", "")
 WANDB_ENTITY = os.getenv("WANDB_ENTITY", "alaska0-university-of-milano-bicocca")
 DATADIR = "/scratch_share/islab/Chaima/tribe_v1_work_space/Data/CMD_Data"
