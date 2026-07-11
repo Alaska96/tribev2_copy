@@ -17,7 +17,7 @@ update = {
     "data.neuro.projection": None, # skip projection to use parcellated data instead
     #"infra.slurm_partition": "only-one-gpu", # fix null partition
     "infra.timeout_min": 60 * 24 * 2,          # 2 days ( QOS limit )
- 
+    "infra.workdir": None,
 }
 
 grid = {
