@@ -97,7 +97,7 @@ for extractor in [
     extractor["infra"]["version"] = "release"
     if extractor["name"] == "FmriExtractor":
         extractor["infra"]["max_jobs"] = 8#  was 1024 --> QOS limit
-        extractor["infra"]["slurm_partition"] = "ulow" # to avoid using gpu 
+        extractor["infra"]["slurm_partition"] = "only-one-gpu" 
     else:
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
