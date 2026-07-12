@@ -23,7 +23,7 @@ update = {
 grid = {# contains grid of the tribev1
     "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered 
     "data.layers_to_use": [[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1.], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
-    "loss.name": ["MSELoss", "PearsonLoss", "SmoothL1Loss", "HuberLoss"],
+    "loss.name": ["MSELoss", "SmoothL1Loss", "HuberLoss"],
     "data.layer_aggregation": [None, "group_mean"],
     "brain_model_config.subject_embedding": [True, False],
     "brain_model_config.extractor_aggregation": ["cat", "sum", "stack"],
