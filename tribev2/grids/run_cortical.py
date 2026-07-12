@@ -27,7 +27,7 @@ grid = {# contains grid of the tribev1
     "data.layer_aggregation": [None, "group_mean"],
     "brain_model_config.subject_embedding": [True, False],
     "brain_model_config.extractor_aggregation": ["cat", "mean"],
-    "brain_model_config.feature_aggregation": ["cat", "sum"],
+    #"brain_model_config.feature_aggregation": ["cat", "sum"],
     "brain_model_config.modality_dropout": [0.0, 0.2, 0.4],
 }
 
