@@ -18,6 +18,7 @@ update = {
     #"infra.slurm_partition": "only-one-gpu", # fix null partition
     "infra.timeout_min": 60 * 24 * 2,          # 2 days ( QOS limit )
     "infra.workdir": None,
+    "seed": None,  # random seed per model
 }
 
 grid = {# contains grid of the tribev1
@@ -42,6 +43,7 @@ if __name__ == "__main__":
         grid,
         job_name_keys=["wandb_config.name", "infra.job_name"],
         combinatorial=True,
+        n_randomly_sampled=1000 #### for tribe v1 logic "ensembling"
         overwrite=False,
         dry_run=False,
         infra_mode="retry", #resubmit crashed jobs considering cashes, while for #infra_mode="force" :jobs were cancelled before starting
