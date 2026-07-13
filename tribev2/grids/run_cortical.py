@@ -42,7 +42,7 @@ if __name__ == "__main__":
         updated_config,
         grid,
         job_name_keys=["wandb_config.name", "infra.job_name"],
-        combinatorial=True,
+        combinatorial=False, # was True for Tribe v2 logic but for tribe v1 logic i set it to False since we will use random sampling as set below
         n_randomly_sampled=1000 #### for tribe v1 logic "ensembling"
         overwrite=False,
         dry_run=False,
