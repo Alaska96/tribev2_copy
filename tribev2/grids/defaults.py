@@ -137,7 +137,7 @@ default_config = {
         "overlap_trs_val": 0,
         "shuffle_val": True,
         "num_workers": N_CPUS,# 
-        "layers_to_use": [0.5, 0.75, 1.0],#for the training phase
+        "layers_to_use": [0.5, 0.75, 1.0],# this turned out to be layers to use for features extractors and not the default values which were used
         "layer_aggregation": "group_mean",
         "study": {
             "names": [
