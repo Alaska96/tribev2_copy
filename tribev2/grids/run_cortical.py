@@ -43,7 +43,7 @@ if __name__ == "__main__":
         grid,
         job_name_keys=["wandb_config.name", "infra.job_name"],
         combinatorial=True, # can be set to False since for tribe v1 logic it  will use random sampling as set below
-        n_randomly_sampled=1000 #### for tribe v1 logic "ensembling"
+        n_randomly_sampled=1000,#### for tribe v1 logic "ensembling"
         overwrite=False,
         dry_run=False,
         infra_mode="retry", #resubmit crashed jobs considering cashes, while for #infra_mode="force" :jobs were cancelled before starting
