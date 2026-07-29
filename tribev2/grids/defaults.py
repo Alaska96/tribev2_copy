@@ -65,7 +65,7 @@ audio_feature = {
 neuro_extractor = {
     "name": "FmriExtractor",
     "allow_missing": True,
-    "offset": 5,
+    "offset": 4.47,
     "frequency": 1/1.49, # was 1 but put it to 1/1.49 since i will use fMRI at TR=1.49s--> thus neuro_extractor will not apply fMRI resampling 
     "projection": {
         "name": "SurfaceProjector",# default projector ,works for run_cortical , but run_subcortical should override it to "MaskPorjector", and for my pipline i will disable the projector in further steps , since i will not use Algonaut2025Bold study
