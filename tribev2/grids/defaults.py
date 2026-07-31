@@ -137,7 +137,7 @@ default_config = {
         "overlap_trs_val": 0,
         "shuffle_val": True,
         "num_workers": N_CPUS,# 
-        "layers_to_use": [0.5, 0.75, 1.0],# for train or feature extractors?
+        "layers_to_use": [0.5, 0.75, 1.0],# for feature extractors?
         "study": {
             "names": [
                 "Algonauts2025",# "Algonauts2025Bold" # algonauts_2025.competitors
@@ -252,11 +252,11 @@ default_config = {
         },
     },
     "n_epochs": 15,
-    "limit_train_batches": None,# if set to e.g. 10, only runs 10 batches per epoch — useful for debugging. None = full dataset
+    "limit_train_batches": 10 # None,# if set to e.g. 10, only runs 10 batches per epoch — useful for debugging. None = full dataset
     "patience": None,
     "enable_progress_bar": True,
     "log_every_n_steps": 5,
-    "fast_dev_run": False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
+    "fast_dev_run": True #False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
     "seed": 33,
 }
 
