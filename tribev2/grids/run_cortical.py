@@ -7,7 +7,7 @@
 from exca import ConfDict
 from neuraltrain.utils import run_grid
 
-from .main import TribeExperiment  # type: ignore
+from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config #  light configs for test only 
 from .defaults import default_config 
 GRID_NAME = "tribe_v2_basline_cortical"
