@@ -10,6 +10,7 @@ from neuraltrain.utils import run_grid
 from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config #  light configs for test only 
 from .defaults import default_config 
+from .configs import base_config # this is to select 20 compressed layers from each extractor
 GRID_NAME = "tribe_v2_basline_cortical"
 
 update = {
