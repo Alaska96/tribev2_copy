@@ -125,7 +125,7 @@ default_config = {
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
         "workdir": {
-            "copied": ["neuralset", "neuraltrain", "tribev2"],
+            "copied": ["tribev2"],#"copied": ["neuralset", "neuraltrain", "tribev2"]
             "includes": ["*.py", "*.txt"],
         },
        # "workdir": None,
