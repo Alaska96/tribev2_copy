@@ -18,7 +18,7 @@ update = {
     "data.neuro.projection": None, # skip projection to use parcellated data instead
     #"infra.slurm_partition": "only-one-gpu", # fix null partition
     "infra.timeout_min": 60 * 24 * 2,          # 2 days ( QOS limit )
-    "infra.workdir": None,# neuro data will not be cashed
+    #"infra.workdir": None,# neuro data will not be cashed
     "seed": None,  # random seed per model
 }
 
@@ -34,7 +34,8 @@ grid = {# contains grid of the tribev1
 }
 
 if __name__ == "__main__":
-    updated_config = ConfDict(default_config) # use default_config instead of mini_config
+    #updated_config = ConfDict(default_config) # use default_config instead of mini_config
+    updated_config = ConfDict(base_config) # use baseconfig
     updated_config.update(update)
 
     out = run_grid(
