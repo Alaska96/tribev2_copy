@@ -97,12 +97,13 @@ for extractor in [
     extractor["infra"]["version"] = "release"
     if extractor["name"] == "FmriExtractor":
         extractor["infra"]["max_jobs"] = 8#  was 1024 --> QOS limit
-        #extractor["infra"]["slurm_partition"] = "only-one-gpu" 
-    
-    #else:
-    extractor["infra"]["gpus_per_node"] = 1
-    extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
-        #extractor["device"] = "cuda" # !!!!!!!!!!!!!!!!!!! solve the issue of using CPU intead of GPU , alternative solution was to launch run from inside the compute node instead of log in node
+        #extractor["infra"]["slurm_partition"] = "only-one-gpu"
+
+   else: 
+        extractor["infra"]["gpus_per_node"] = 1
+        extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
+        if extractor["name"] != "HuggingFaceVideo":
+            extractor["device"] = "cuda" # !!!!!!!!!!!!!!!!!!! solve the issue of using CPU intead of GPU , alternative solution was to launch run from inside the compute node instead of log in node
     if extractor["name"] == "HuggingFaceVideo":
        # extractor["device"] = "cuda"
         extractor["infra"]["min_samples_per_job"] = 100 ## was 1
