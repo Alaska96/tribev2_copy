@@ -99,7 +99,7 @@ for extractor in [
         extractor["infra"]["max_jobs"] = 8#  was 1024 --> QOS limit
         #extractor["infra"]["slurm_partition"] = "only-one-gpu"
 
-   else: 
+    else: 
         extractor["infra"]["gpus_per_node"] = 1
         extractor["infra"]["slurm_constraint"] = SLURM_CONSTRAINT
         if extractor["name"] != "HuggingFaceVideo":
