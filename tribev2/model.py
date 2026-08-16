@@ -153,7 +153,8 @@ class FmriEncoderModel(nn.Module):
                     torch.randn(1, config.max_seq_len, hidden)
                 )
             if config.subject_embedding:
-                self.subject_embed = nn.Embedding(config.n_subjects, hidden)
+                #self.subject_embed = nn.Embedding(config.n_subjects, hidden) # FMRIEncoder configs  doesnt have n_subjects parameter but it has subject_layers which has n_subjects parameter  
+                 self.subject_embed = nn.Embedding(config.subject_layers.n_subjects, hidden)
             self.encoder = config.encoder.build(dim=hidden)
 
     @property
