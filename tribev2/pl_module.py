@@ -6,7 +6,7 @@
 
 """Custom lightning module that wraps a pytorch model.
 """
-
+"""This file contains a class that encapsulates the training of fMRI encoding model, connecting configs with data and model architecture, whilst model desing is in model.py"""
 import typing as tp
 from pathlib import Path
 
