@@ -260,7 +260,7 @@ default_config = {
     "patience": None,
     "enable_progress_bar": True,
     "log_every_n_steps": 5,
-    "fast_dev_run": False #True, #False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
+    "fast_dev_run": False,#True, #False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
     "seed": 33,
 }
 
