@@ -271,7 +271,7 @@ if __name__ == "__main__":
     from ..main import TribeExperiment
 
     exp = TribeExperiment(
-        **default_config,checkpoint_path ="/scratch_share/islab/Chaima/tribe_v2_work_space/check"
+        **default_config,checkpoint_path ="/scratch_share/islab/Chaima/tribe_v2_work_space/check",
     )
 
     exp.infra.clear_job()
