@@ -17,6 +17,7 @@ DATADIR = "/scratch_share/islab/Chaima/tribe_v1_work_space/Data/CMD_Data"
 BASEDIR = "/scratch_share/islab/Chaima/tribe_v2_work_space"
 CACHEDIR = os.path.join(BASEDIR, "cache_full", PROJECT_NAME)
 SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)
+
 N_CPUS = 8  #20 # may need to be changed if it violate QOS policy
 
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
@@ -259,7 +260,7 @@ default_config = {
     "patience": None,
     "enable_progress_bar": True,
     "log_every_n_steps": 5,
-    "fast_dev_run": True, #False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
+    "fast_dev_run": False #True, #False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
     "seed": 33,
 }
 
@@ -270,7 +271,7 @@ if __name__ == "__main__":
     from ..main import TribeExperiment
 
     exp = TribeExperiment(
-        **default_config,
+        **default_config,checkpoint_path ="/scratch_share/islab/Chaima/tribe_v2_work_space/check"
     )
 
     exp.infra.clear_job()
