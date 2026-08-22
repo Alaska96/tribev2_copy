@@ -288,7 +288,7 @@ class Data(pydantic.BaseModel):
             dataset = ns.dataloader.SegmentDataset(
                 extractors=extractors,
                 segments=segments,
-                remove_incomplete_segments=False,
+                remove_incomplete_segments=True,# was false but triggered ValueError: cannot reshape array of size 0 into shape (20,3072)
             )
             dataloader = dataset.build_dataloader(
                 shuffle=shuffle,
