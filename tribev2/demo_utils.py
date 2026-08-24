@@ -319,7 +319,9 @@ class TribeModel(TribeExperiment):
         }
         return get_audio_and_text_events(pd.DataFrame([event]))
         
-    def get_study_events_dataframe(self, query: str | None = None) -> pd.DataFrame:
+    def get_study_events_dataframe(
+        self, data_path: str | Path, query: str | None = None
+    ) -> pd.DataFrame:
         """Build an events DataFrame from the configured study, optionally filtered.
 
         Unlike :meth:`get_events_dataframe` (which builds events for one
@@ -331,8 +333,17 @@ class TribeModel(TribeExperiment):
         cached from earlier training runs since nothing filters them out
         before feature extraction.
 
+        ``from_pretrained`` resets ``data.study.path`` to ``"."`` (so a
+        shared/downloaded checkpoint never assumes the original training
+        machine's dataset is present) — so *this* method needs to be told
+        explicitly where the actual raw dataset lives, via ``data_path``.
+
         Parameters
         ----------
+        data_path:
+            Root directory containing the raw study data (what ``DATADIR``
+            pointed to during training), e.g.
+            ``"/scratch_share/islab/Chaima/tribe_v1_work_space/Data/CMD_Data"``.
         query:
             Optional pandas ``DataFrame.query()`` expression applied to the
             resulting events, e.g. ``"movie == 's07'"`` to isolate a specific
@@ -343,12 +354,11 @@ class TribeModel(TribeExperiment):
         pd.DataFrame
             Events DataFrame ready to pass to :meth:`predict`.
         """
+        self.data.study.path = data_path
         events = self.data.get_events()
         if query is not None:
             events = events.query(query)
-        return events
-
-    def predict(
+        return events    def predict(
         self, events: pd.DataFrame, verbose: bool = True
     ) -> tuple[np.ndarray, list]:
         """Run inference on an events DataFrame and return per-TR predictions.
