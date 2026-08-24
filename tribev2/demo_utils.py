@@ -319,7 +319,7 @@ class TribeModel(TribeExperiment):
         }
         return get_audio_and_text_events(pd.DataFrame([event]))
         
-   def get_study_events_dataframe(self, query: str | None = None) -> pd.DataFrame:
+    def get_study_events_dataframe(self, query: str | None = None) -> pd.DataFrame:
         """Build an events DataFrame from the configured study, optionally filtered.
 
         Unlike :meth:`get_events_dataframe` (which builds events for one
