@@ -318,6 +318,35 @@ class TribeModel(TribeExperiment):
             "subject": "default",
         }
         return get_audio_and_text_events(pd.DataFrame([event]))
+        
+   def get_study_events_dataframe(self, query: str | None = None) -> pd.DataFrame:
+        """Build an events DataFrame from the configured study, optionally filtered.
+
+        Unlike :meth:`get_events_dataframe` (which builds events for one
+        ad-hoc file), this reuses the full ``Study``/``MultiStudyLoader``
+        pipeline configured on this experiment (e.g. Algonauts2025) and lets
+        you filter the resulting events with a pandas query string. Useful
+        for isolating a held-out split that already exists inside the study
+        (e.g. Algonauts season 7), whose stimulus features may already be
+        cached from earlier training runs since nothing filters them out
+        before feature extraction.
+
+        Parameters
+        ----------
+        query:
+            Optional pandas ``DataFrame.query()`` expression applied to the
+            resulting events, e.g. ``"movie == 's07'"`` to isolate a specific
+            season. If ``None``, the full events table is returned.
+
+        Returns
+        -------
+        pd.DataFrame
+            Events DataFrame ready to pass to :meth:`predict`.
+        """
+        events = self.data.get_events()
+        if query is not None:
+            events = events.query(query)
+        return events
 
     def predict(
         self, events: pd.DataFrame, verbose: bool = True
