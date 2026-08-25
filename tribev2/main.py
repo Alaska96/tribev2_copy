@@ -349,7 +349,7 @@ class TribeExperiment(BaseExperiment):
     # Others
     infra: TaskInfra = TaskInfra(version="1")
 
-    def model_post_init(self, __context: tp.Any) -> None:
+    def model_post_init(self, __context: tp.Any) -> None: #update trainer params based on the infra configs
         super().model_post_init(__context)
         if self.infra.folder is None:
             msg = "infra.folder needs to be specified to save the results."
@@ -412,7 +412,7 @@ class TribeExperiment(BaseExperiment):
                 checkpoint_path = None
         return checkpoint_path
 
-    def _init_module(self, model: nn.Module) -> tp.Any:
+    def _init_module(self, model: nn.Module) -> tp.Any: # wraps the model to be trained with the train logic "model-train logic intergration" taking into account configs
         from .pl_module import BrainModule
 
         checkpoint_path = self._get_checkpoint_path()
