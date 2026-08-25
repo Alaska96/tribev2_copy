@@ -358,7 +358,8 @@ class TribeModel(TribeExperiment):
         events = self.data.get_events()
         if query is not None:
             events = events.query(query)
-        return events    def predict(
+        return events    
+    def predict(
         self, events: pd.DataFrame, verbose: bool = True
     ) -> tuple[np.ndarray, list]:
         """Run inference on an events DataFrame and return per-TR predictions.
