@@ -362,6 +362,7 @@ class TribeModel(TribeExperiment):
     def predict(
         self, events: pd.DataFrame, verbose: bool = True
     ) -> tuple[np.ndarray, list]:
+        # get_Data_loader--> loader --> [batch--> segments]--> model--> preds --> append preds of all segments (segment is 100TRs window)
         """Run inference on an events DataFrame and return per-TR predictions.
 
         Each batch is split into segments of length ``data.TR``.  When
