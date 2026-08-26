@@ -225,7 +225,8 @@ class TribeModel(TribeExperiment):
         xp = cls(**config)
 
         logger.info(f"Loading model from {ckpt_path}")
-        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True, mmap=True)
+        #ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True, mmap=True)
+        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True)
         build_args = ckpt["model_build_args"]
         state_dict = {
             k.removeprefix("model."): v for k, v in ckpt["state_dict"].items()
@@ -354,11 +355,16 @@ class TribeModel(TribeExperiment):
         pd.DataFrame
             Events DataFrame ready to pass to :meth:`predict`.
         """
+     
         self.data.study.path = data_path
+        if query is not None:
+           self.data.study.transforms["query"].query = query
+           self.data.study.transforms.move_to_end("query", last=False)
         events = self.data.get_events()
         if query is not None:
-            events = events.query(query)
-        return events    
+           events = events.query(query)
+        return events 
+        
     def predict(
         self, events: pd.DataFrame, verbose: bool = True
     ) -> tuple[np.ndarray, list]:
