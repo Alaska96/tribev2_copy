@@ -225,8 +225,8 @@ class TribeModel(TribeExperiment):
         xp = cls(**config)
 
         logger.info(f"Loading model from {ckpt_path}")
-        #ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True, mmap=True)
-        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True, mmap=True)
+        #ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True)
         build_args = ckpt["model_build_args"]
         state_dict = {
             k.removeprefix("model."): v for k, v in ckpt["state_dict"].items()
