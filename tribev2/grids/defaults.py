@@ -197,7 +197,7 @@ default_config = {
         "video_feature": video_feature,
         "audio_feature": audio_feature,
         "image_feature": image_feature,# defined but never used for Algonaut study at least
-        "batch_size": 8, # training batch size — number of fMRI segments per training step
+        "batch_size": 16, # training batch size — number of fMRI segments per training step was 8 but set to 16 to match paper
     },
     "wandb_config": {
         "log_model": False,
@@ -208,16 +208,16 @@ default_config = {
     "brain_model_config": {
         "name": "FmriEncoder",
         "low_rank_head": 2048,# of the transformer encoder
-        "hidden": 1152, # of the transformer encoder
+        "hidden":3072, # of the transformer encoder was  1152 for V2 but set to 3072 to match v1 paper description
         "extractor_aggregation": "cat",# how to combine text+audio+video features — concatenate
         "layer_aggregation": "cat",# how to combine multiple layers from each extractor — concatenate
         "combiner": None,
         "encoder": {
             "depth": 8,
         },
-        "subject_layers": {"subject_dropout": 0.1},
+        "subject_layers": {"subject_dropout": 0.0}, # was 0.1 but set to 0.0 to match paper 
         "subject_embedding": True,# default value was False
-        "modality_dropout": 0.3,
+        "modality_dropout": 0.2,# was 0.3 and set to 0.2 to match paper description
     },
     "metrics": [
         {
@@ -241,7 +241,7 @@ default_config = {
     "optim": {
         "name": "LightningOptimizer",
         "optimizer": {
-            "name": "Adam",
+            "name": "AdamW",# was Adam
             "lr": 1e-4,
             "kwargs": {
                 "weight_decay": 0.0,
@@ -257,7 +257,7 @@ default_config = {
     },
     "n_epochs": 15,
     "limit_train_batches": None, # ,# if set to e.g. 10, only runs 10 batches per epoch — useful for debugging. None = full dataset
-    "patience": None,
+    "patience": None, #was none in default sett, 3 matches paper description
     "enable_progress_bar": True,
     "log_every_n_steps": 5,
     "fast_dev_run": False,#True, #False,# PyTorch Lightning flag — if True, runs 1 batch of train+val then stops. For quick sanity checks
