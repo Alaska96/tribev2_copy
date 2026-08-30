@@ -15,8 +15,8 @@ SLURM_CONSTRAINT = os.getenv("SLURM_CONSTRAINT", "")
 WANDB_ENTITY = os.getenv("WANDB_ENTITY", "alaska0-university-of-milano-bicocca")
 DATADIR = "/scratch_share/islab/Chaima/tribe_v1_work_space/Data/CMD_Data"
 BASEDIR = "/scratch_share/islab/Chaima/tribe_v2_work_space"
-CACHEDIR = os.path.join(BASEDIR, "cache", PROJECT_NAME)
-SAVEDIR = os.path.join(BASEDIR, "results_partial_cache", PROJECT_NAME)
+CACHEDIR = os.path.join(BASEDIR, "cache_full", PROJECT_NAME)
+SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)# "results_partial_cache"
 
 N_CPUS = 8  #20 # may need to be changed if it violate QOS policy
 
