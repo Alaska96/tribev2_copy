@@ -25,11 +25,15 @@ update = {
 grid = {# contains grid of the tribev1
     "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
     #"data.layers_to_use": [[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1.], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
+    "data.layers_to_use": [ [0.5, 0.75, 1.0], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
     #"loss.name": ["MSELoss", "SmoothL1Loss", "HuberLoss"],
-    #"data.layer_aggregation": [None, "group_mean"],
+    #"data.layer_aggregation": ["mean", "group_mean"],
     #"brain_model_config.subject_embedding": [True, False],
+    #"brain_model_config.time_pos_embedding": [True, False],
     #"brain_model_config.extractor_aggregation": ["cat", "sum", "stack"],
-    #"brain_model_config.feature_aggregation": ["cat", "sum"],
+    "brain_model_config.extractor_aggregation": ["sum", "stack"],
+    #"brain_model_config.feature_aggregation": ["cat", "sum"], #????
+    "brain_model_config.layer_aggregation": ["mean", "cat"],
     #"brain_model_config.modality_dropout": [0.0, 0.2, 0.4],
 }
 
@@ -44,7 +48,7 @@ if __name__ == "__main__":
         updated_config,
         grid,
         job_name_keys=["wandb_config.name", "infra.job_name"],
-        combinatorial=True, # can be set to False since for tribe v1 logic it  will use random sampling as set below
+        combinatorial=True, # Exhaustive grid search can be set to False since for tribe v1 logic it  will use random sampling as set below
         #n_randomly_sampled=5,#### for tribe v1 logic "ensembling"
         overwrite=False,
         dry_run=False,
