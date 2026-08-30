@@ -139,7 +139,7 @@ default_config = {
         "duration_trs": 100, # segmentation window size in trs
         "overlap_trs_train": 0, 
         "overlap_trs_val": 0,
-        "shuffle_val": True,
+        "shuffle_val": False, #  True,
         "num_workers": N_CPUS,# 
         "layers_to_use": [0.5, 0.75, 1.0],# for feature extractors?
         "study": {
