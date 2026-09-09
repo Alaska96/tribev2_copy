@@ -264,6 +264,7 @@ class Data(pydantic.BaseModel):
                     overlap_trs = self.overlap_trs_val or self.overlap_trs_train
                 else:
                     overlap_trs = self.overlap_trs_train
+            sel = np.array(split_sel)
             # --- TEMPORARY DEBUG: last dataframe level before segmentation ---
             print(f"[DEBUG] events[sel] shape: {events[sel].shape}")
             print(f"[DEBUG] events[sel] columns: {list(events[sel].columns)}")
@@ -271,7 +272,7 @@ class Data(pydantic.BaseModel):
             print(f"[DEBUG] events[sel] first 20 rows:\n{events[sel].head(20).to_string()}")
             # --- END TEMPORARY DEBUG ---
 
-            sel = np.array(split_sel)
+           
             print("************** Hello from Class Data.get_loaders()/ TR based feature segmentation  D10 *******************")
             segments = ns.segments.list_segments(
                 events[sel],
