@@ -251,7 +251,7 @@ default_config = {
             "name": "OneCycleLR",
             "kwargs": {
                 "max_lr": 1e-4,
-                "pct_start": 0.1,
+                "pct_start": 0.0,#0.1
             },
         },
     },
