@@ -124,7 +124,7 @@ default_config = {
         "folder": SAVEDIR,
         "gpus_per_node": 1,
         "cpus_per_task": N_CPUS,
-        "mem_gb": 128, # was 64,set back to 128 in the train phase
+        "mem_gb": 64, # was 64,set back to 128 in the train phase
         "timeout_min": 60 * 24*2,
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
