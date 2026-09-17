@@ -244,14 +244,14 @@ default_config = {
             "name": "AdamW",# was Adam
             "lr": 1e-4,
             "kwargs": {
-                "weight_decay": 0.0,
+                "weight_decay":  1e-2,
             },
         },
         "scheduler": {
             "name": "OneCycleLR",
             "kwargs": {
                 "max_lr": 1e-4,
-                "pct_start": 0.0,#0.1
+                "pct_start":0.1,
             },
         },
     },
