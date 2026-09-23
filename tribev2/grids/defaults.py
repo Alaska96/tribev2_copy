@@ -255,7 +255,7 @@ default_config = {
             },
         },
     },
-    "n_epochs": 30,
+    "n_epochs":15 ,# 30
     "limit_train_batches": None, # ,# if set to e.g. 10, only runs 10 batches per epoch — useful for debugging. None = full dataset
     "patience": None, #was none in default sett, 3 matches paper description
     "enable_progress_bar": True,
