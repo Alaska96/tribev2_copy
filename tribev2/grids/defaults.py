@@ -18,7 +18,7 @@ BASEDIR = "/scratch_share/islab/Chaima/tribe_v2_work_space"
 CACHEDIR = os.path.join(BASEDIR, "cache_full", PROJECT_NAME)
 SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)# "results_partial_cache"
 
-N_CPUS = 4 #20 # may need to be changed if it violate QOS policy
+N_CPUS = 8#20 # may need to be changed if it violate QOS policy
 
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
     Path(path).mkdir(parents=True, exist_ok=True)
