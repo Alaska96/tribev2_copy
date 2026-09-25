@@ -207,7 +207,7 @@ default_config = {
     },
     "brain_model_config": {
         "name": "FmriEncoder",
-        "low_rank_head": 2048,# of the transformer encoder
+        "low_rank_head": 2048,# of the transformer encoder # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$?????????
         "hidden":3072, # of the transformer encoder was  1152 for V2 but set to 3072 to match v1 paper description
         "extractor_aggregation": "cat",# how to combine text+audio+video features — concatenate
         "layer_aggregation": "cat",# how to combine multiple layers from each extractor — concatenate
@@ -216,8 +216,8 @@ default_config = {
             "depth": 8,
         },
         "subject_layers": {"subject_dropout": 0.1}, # was 0.1 but set to 0.0 to match paper 
-        "subject_embedding": True,# default value was False
-        "modality_dropout": 0.2,# was 0.3 and set to 0.2 to match paper description
+        "subject_embedding": False,# True ,default value was False
+        "modality_dropout": 0.4,# was 0.3 and set to 0.2 /0.4 to match paper description
     },
     "metrics": [
         {
