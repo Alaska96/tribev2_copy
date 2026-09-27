@@ -114,7 +114,7 @@ class Algonauts2025(study.Study):
                     )
                     for movie, chunk in product(*movie_chunk):  # type: ignore
                         tl = dict(
-                            subject=subject,
+                            subject=subject,  
                             task=task,
                             movie=movie,
                             chunk=str(chunk),
@@ -123,7 +123,7 @@ class Algonauts2025(study.Study):
                         stim_path = self._get_movie_filepath(tl)
                         if stim_path.exists():
                             yield tl
-                 raise ValueError(f"requested movie(task) is not in the inference dataset: {tl['task']}")
+                raise ValueError(f"requested movie(task) is not in the inference dataset: {tl['task']}")
 
     def _get_transcript_filepath(self, timeline: dict[str, tp.Any]) -> Path:
         tl = timeline
