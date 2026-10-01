@@ -90,13 +90,13 @@ class Algonauts2025(study.Study):
     )
 
     _info: tp.ClassVar[study.StudyInfo] = study.StudyInfo(
-        num_timelines=12,
+        num_timelines=48,
         num_subjects=4,
-        num_events_in_query=22,
-        event_types_in_query={"Fmri", "Video", "Word", "Text"},
-        data_shape=(1000, 592),
-        frequency=0.671,
-        fmri_spaces=("custom",),
+        num_events_in_query=1,
+        event_types_in_query={"Video", "Word", "Text"},
+        #data_shape=(1000, 592),
+        #frequency=0.671,
+        #fmri_spaces=("custom",),
     )
 
     def _download(self) -> None:
@@ -109,7 +109,7 @@ class Algonauts2025(study.Study):
                 if task == "ood":
                     movie_chunk= (
                         ["chaplin","mononoke","passepartout","planetearth","pulpfiction","wot"],
-                        range(1, 2),
+                        range(1, 3),
 
                     )
                     for movie, chunk in product(*movie_chunk):  # type: ignore
@@ -123,7 +123,7 @@ class Algonauts2025(study.Study):
                         stim_path = self._get_movie_filepath(tl)
                         if stim_path.exists():
                             yield tl
-                raise ValueError(f"requested movie(task) is not in the inference dataset: {tl['task']}")
+         raise ValueError(f"requested movie(task) is not in the inference dataset: {tl['task']}")
 
     def _get_transcript_filepath(self, timeline: dict[str, tp.Any]) -> Path:
         tl = timeline
@@ -258,41 +258,4 @@ class Algonauts2025(study.Study):
         return events_df
 
 
-class Algonauts2025Bold(Algonauts2025):
 
-    _info: tp.ClassVar[study.StudyInfo] = study.StudyInfo(
-        num_timelines=1588,
-        num_subjects=4,
-        num_events_in_query=1700,
-        event_types_in_query={"Fmri", "Video", "Word", "Text"},
-        data_shape=(76, 90, 71, 592),
-        frequency=0.671, # 1/1.49s
-        fmri_spaces=("T1w", "MNI152NLin2009cAsym"),
-    )
-
-    def _download(self) -> None:
-        raise NotImplementedError("Download method not implemented yet")
-
-    def _get_fmri_event(self, timeline: dict[str, tp.Any]) -> dict[str, tp.Any]:
-        """Return fmri event dict using fmriprep finder"""
-        tl = timeline
-        if tl["task"] == "friends":
-            task_str = f"{tl['movie']}{tl['chunk']}"
-        else:
-            task_str = f"{tl['movie']}{int(tl['chunk']):02d}"
-        subj_dir = self.path / "algonauts_2025.competitors"/ f"{tl['task']}.fmriprep" / tl["subject"] # this path is not valid since i dont have the raw fMRI data
-        task_pattern = f"*_task-{task_str}_*"
-        for session_dir in sorted(subj_dir.iterdir()):
-            if not session_dir.name.startswith("ses-"):
-                continue
-            func_dir = session_dir / "func"
-            if func_dir.exists() and list(func_dir.glob(task_pattern + ".nii.gz")):
-                fp = func_dir / task_pattern
-                return dict(
-                    type="Fmri",
-                    filepath=fp,
-                    layout="fmriprep",
-                    start=0,
-                    frequency=self._FREQUENCY,
-                )
-        raise FileNotFoundError(f"No fMRI file found for {tl}")
