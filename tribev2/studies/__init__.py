@@ -3,7 +3,7 @@
 #
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
-
+from .ood_algonauts2025 import OOD_Algonauts2025
 from .algonauts2025 import Algonauts2025, Algonauts2025Bold
 from .lahner2024bold import Lahner2024Bold
 from .lebel2023bold import Lebel2023Bold
