@@ -23,6 +23,7 @@ from neuralset.events.transforms.utils import DeterministicSplitter
 from tqdm import tqdm
 
 SPLIT_ATTRIBUTES = {
+    "OOD_Algonauts2025": "chunk",
     "Algonauts2025Bold": "chunk",
     "Algonauts2025": "chunk",
     "Lebel2023Bold": "task",
