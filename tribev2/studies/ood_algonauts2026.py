@@ -1,46 +1,3 @@
-
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-"""Algonauts Project 2025 Challenge: fMRI responses to multimodal movie stimuli.
-
-This study is part of the Algonauts Project 2025 Challenge, using a subset of the
-Courtois NeuroMod dataset (https://www.cneuromod.ca/). Participants watched naturalistic
-video stimuli including episodes from the TV sitcom "Friends" and extractor films while
-undergoing fMRI scanning.
-
-Experimental Design:
-    - 4 participants (sub-01, sub-02, sub-03, sub-05)
-    - Two stimulus types:
-        * "Friends" sitcom: 7 seasons, ~175 episodes, segmented into ~5min chunks (a,b,c,d)
-        * "movie10": 4 extractor films (Bourne, Wolf, Life, Figures) in ~5min chunks
-    - TR = 1.49 seconds
-    - Training data: Friends seasons 1-6, all movies
-    - Test data: Friends season 7
-    - Some movies shown twice (Life, Figures) for reliability analysis
-
-Data Format:
-    - Preprocessed fMRI in MNI152NLin2009cAsym space
-    - Parcellated using Schaefer-1000 atlas (1000 parcels, 7 networks)
-    - HDF5 format
-    - Video stimuli provided as .mkv files
-    - Word-level transcripts with timestamps (.tsv format)
-    - Includes rich multimodal annotations (speech, text, visual extractors)
-
-Download Requirements:
-    - Datalad must be installed (pip install datalad)
-    - Git must be configured
-    - Dataset cloned from: https://github.com/courtois-neuromod/algonauts_2025.competitors.git
-    - Moderate dataset size (~several GB)
-
-Note:
-    This dataset is designed for the Algonauts 2025 Challenge focused on predicting
-    brain responses to complex, naturalistic multimodal stimuli.
-    See: https://algonautsproject.com/2025/index.html
-"""
-
 import ast
 import logging
 import typing as tp
@@ -49,22 +6,24 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from neuralset.events import study 
+from neuralset.events import study
 
 logger = logging.getLogger(__name__)
 
 
-class Algonauts2025(study.Study):
-    
-    "# ******************************* D6   class Algonauts2025(study.Study) was instantiated  "
+class OOD_Algonauts2025(study.Study):
+
+    "# ******************************* D6   class OOD_Algonauts2025(study.Study) was instantiated  "
     _SUBJECTS: tp.ClassVar[list[str]] = ["sub-01", "sub-02", "sub-03", "sub-05"]
     _TASKS: tp.ClassVar[list[str]] = ["ood"]
     _SPACE: tp.ClassVar[str] = "space-MNI152NLin2009cAsym"
     _ATLAS: tp.ClassVar[str] = "atlas-Schaefer18_parcel-1000Par7Net"
     _FREQUENCY: tp.ClassVar[float] = 1 / 1.49
+    # study name used at training time: subject names must match the checkpoint's subject mapping
+    _TRAINED_STUDY_NAME: tp.ClassVar[str] = "Algonauts2025"
 
     device: tp.ClassVar[str] = "Fmri"
-    dataset_name: tp.ClassVar[str] =  "algonauts_2025.competitors.ood.inference"#"Algonauts 2025 Challenge"
+    dataset_name: tp.ClassVar[str] = "algonauts_2025.competitors.ood"  # metadata only, not used for paths
     url: tp.ClassVar[str] = "https://algonautsproject.com/"
     bibtex: tp.ClassVar[
         str
@@ -82,7 +41,7 @@ class Algonauts2025(study.Study):
     }
     """
     description: tp.ClassVar[str] = (
-        'Subset of Courtois NeuroMod dataset (boyle2020) with fMRI recordings of subjects watching videos of a popular sitcom ("Friends") for Algonauts 2025'
+        "Out-of-distribution (ood) subset of the Algonauts 2025 stimuli, used for inference only (no fMRI)"
     )
     requirements: tp.ClassVar[tuple[str, ...]] = (
         "datalad>=0.19.5",
@@ -90,54 +49,48 @@ class Algonauts2025(study.Study):
     )
 
     _info: tp.ClassVar[study.StudyInfo] = study.StudyInfo(
-        num_timelines=48,
+        num_timelines=48,  # 4 subjects x 6 movies x 2 chunks (checked at load time)
         num_subjects=4,
-        num_events_in_query=1,
-        event_types_in_query={"Video", "Word", "Text"},
-        #data_shape=(1000, 592),
-        #frequency=0.671,
-        #fmri_spaces=("custom",),
+        num_events_in_query=1,  # default query "timeline_index < 1" -> sub-01 chaplin1: 1 Video event
+        event_types_in_query={"Video"},
     )
 
     def _download(self) -> None:
         raise NotImplementedError("Download method not implemented yet")
 
     def iter_timelines(self) -> tp.Iterator[dict[str, tp.Any]]:
-        "# ******************************* D7  class Algonauts2025(study.Study). iter_timelines(self) "
+        "# ******************************* D7  class OOD_Algonauts2025(study.Study). iter_timelines(self) "
         for subject in self._SUBJECTS:
             for task in self._TASKS:
                 if task == "ood":
-                    movie_chunk= (
-                        ["chaplin","mononoke","passepartout","planetearth","pulpfiction","wot"],
+                    movie_chunk = (
+                        ["chaplin", "mononoke", "passepartout", "planetearth", "pulpfiction", "wot"],
                         range(1, 3),
-
                     )
                     for movie, chunk in product(*movie_chunk):  # type: ignore
                         tl = dict(
-                            subject=subject,  
+                            subject=subject,
                             task=task,
                             movie=movie,
                             chunk=str(chunk),
                         )
-                    
                         stim_path = self._get_movie_filepath(tl)
                         if stim_path.exists():
                             yield tl
-         raise ValueError(f"requested movie(task) is not in the inference dataset: {tl['task']}")
+                else:
+                    raise ValueError(f"requested movie(task) is not in the inference dataset: {task}")
 
     def _get_transcript_filepath(self, timeline: dict[str, tp.Any]) -> Path:
         tl = timeline
         base = (
             self.path
             / "algonauts_2025.competitors/stimuli/transcripts"
-            / tl["task"] #/ "download/algonauts_2025.competitors/stimuli/transcripts"
+            / tl["task"]
         )
-        if tl["task"] == "ood": 
-           if tl["movie"] == "chaplin": continue
-           return (
-                base / f"{tl['task']}/_{tl['movie']}{int(tl['chunk'])}.tsv"
-            )
-           
+        if tl["task"] == "ood":
+            if tl["movie"] == "chaplin":
+                raise ValueError("chaplin has no transcript")
+            return base / f"{tl['task']}/_{tl['movie']}{int(tl['chunk'])}.tsv"
         raise ValueError(f"Unknown task: {tl['task']}")
 
     def _get_movie_filepath(self, timeline: dict[str, tp.Any]) -> Path:
@@ -145,73 +98,16 @@ class Algonauts2025(study.Study):
         base = (
             self.path
             / "algonauts_2025.competitors/stimuli/movies"
-            / tl["task"] #/ "download/algonauts_2025.competitors/stimuli/movies"
+            / tl["task"]
         )
+        if tl["task"] == "ood":
+            return base / f"task-{tl['movie']}{int(tl['chunk'])}_video.mkv"
+        raise ValueError(f"Unknown task: {tl['task']}")
 
-        if tl["task"] == "ood": 
-           return (
-               base / f"task-{tl['movie']}{int(tl['chunk'])}_video.mkv"
-            )
-        raise ValueError(f"Unknown task: {tl['task']}") # may raise error since i have also ood movies --> to be chagned in case
-
-    def _get_fmri_filepath(self, timeline: dict[str, tp.Any]) -> Path:
-        tl = timeline
-        subj_dir = (
-            self.path
-            / "algonauts_2025.competitors/fmri"
-            / tl["subject"] #/ "download/algonauts_2025.competitors/fmri"
-            / "func"
-        )
-        stem = f"{tl['subject']}_task-{tl['task']}_{self._SPACE}_{self._ATLAS}"
-        suffix = "_desc-s123456_bold.h5" if tl["task"] == "friends" else "_bold.h5"
-        return subj_dir / f"{stem}{suffix}"
-
-    def _load_fmri(self, timeline: dict[str, tp.Any]) -> tp.Any:
-        import h5py
-
-        tl = timeline
-        fmri_file = self._get_fmri_filepath(timeline)
-        fmri = h5py.File(fmri_file, "r")
-        if tl["task"] == "friends":
-            key = f"{tl['movie'][1:]}{tl['chunk']}"
-        else:
-            key = f"{tl['movie']}{int(tl['chunk']):02d}"
-            if tl["movie"] in ["life", "figures"]:
-                key += f"_run-{tl['run']}"
-        selected_key = [key_ for key_ in fmri.keys() if key in key_]
-        if len(selected_key) != 1:
-            logger.error(
-                "key=%s, selected=%s, available=%s",
-                key,
-                selected_key,
-                list(fmri.keys()),
-            )
-            raise ValueError(f"Multiple or no keys found, {key}, {list(fmri.keys())}")
-        fmri = fmri[selected_key[0]]
-        data = fmri[:].astype(np.float32)
-        import nibabel
-
-        obj = nibabel.Nifti2Image(data.T, affine=np.eye(4))
-        return obj
-
-    def _get_split(self, timeline: dict[str, tp.Any]) -> str:
-        tl = timeline
-        if tl["task"] == "friends":
-            if int(tl["movie"][-1]) in range(1, 7):
-                return "train"
-            elif int(tl["movie"][-1]) == 7:
-                return "test"
-        return "train"
-
-    def _get_fmri_event(self, timeline: dict[str, tp.Any]) -> dict[str, tp.Any]:
-        """Return fmri event dict"""
-        info = study.SpecialLoader(method=self._load_fmri, timeline=timeline).to_json()
-        return dict(type="Fmri", filepath=info, start=0, frequency=self._FREQUENCY)
-
-        def _load_timeline_events(self, timeline: dict[str, tp.Any]) -> pd.DataFrame:
-    # ******************************* D7'   class Algonauts2025(study.Study)._load_timeline_events "
+    def _load_timeline_events(self, timeline: dict[str, tp.Any]) -> pd.DataFrame:
+        # ******************************* D7'   class OOD_Algonauts2025(study.Study)._load_timeline_events "
         all_events = []
-        
+
         movie_filepath = self._get_movie_filepath(timeline)
         movie_event = dict(type="Video", filepath=str(movie_filepath), start=0)
         all_events.append(movie_event)
@@ -257,5 +153,11 @@ class Algonauts2025(study.Study):
 
         return events_df
 
-
-
+    def build(self) -> pd.DataFrame:
+        # neuralset names subjects "<ClassName>/<subject>"; rename to the training study's prefix
+        out = super().build()
+        prefix = f"{self.__class__.__name__}/"
+        out["subject"] = out["subject"].str.replace(
+            prefix, f"{self._TRAINED_STUDY_NAME}/", regex=False
+        )
+        return out
