@@ -90,7 +90,7 @@ class OOD_Algonauts2025(study.Study):
         if tl["task"] == "ood":
             if tl["movie"] == "chaplin":
                 raise ValueError("chaplin has no transcript")
-            return base / f"{tl['task']}/_{tl['movie']}{int(tl['chunk'])}.tsv"
+            return  base / f"{tl['movie']}/{tl['task']}_{tl['movie']}{int(tl['chunk'])}.tsv"
         raise ValueError(f"Unknown task: {tl['task']}")
 
     def _get_movie_filepath(self, timeline: dict[str, tp.Any]) -> Path:
@@ -101,7 +101,7 @@ class OOD_Algonauts2025(study.Study):
             / tl["task"]
         )
         if tl["task"] == "ood":
-            return base / f"task-{tl['movie']}{int(tl['chunk'])}_video.mkv"
+            return base / f"{tl['movie']}/task-{tl['movie']}{int(tl['chunk'])}_video.mkv"
         raise ValueError(f"Unknown task: {tl['task']}")
 
     def _load_timeline_events(self, timeline: dict[str, tp.Any]) -> pd.DataFrame:
