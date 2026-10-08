@@ -208,7 +208,7 @@ default_config = {
     "brain_model_config": {
         "name": "FmriEncoder",
         "low_rank_head": 2048,# of the transformer encoder # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$?????????
-        "hidden":1152, # of the transformer encoder was  1152 for V2 but set to 3072 to match v1 paper description
+        "hidden":3072, # of the transformer encoder was  1152 for V2 but set to 3072 to match v1 paper description
         "extractor_aggregation": "cat",#  "cat" how to combine text+audio+video features — concatenate
         "layer_aggregation":  "cat",#  "cat" how to combine multiple layers from each extractor — concatenate
         "combiner": None,
