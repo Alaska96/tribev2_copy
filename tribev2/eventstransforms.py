@@ -61,8 +61,17 @@ def assign_splits(
     splits = [splitter(value) for value in values]
     if splits and "val" not in splits:
         splits[-1] = "val"  # need at least one val split
+    #val_to_split = dict(zip(values, splits))
+    #events["split"] = events["split_attr"].map(val_to_split)
     val_to_split = dict(zip(values, splits))
+    # keep predefined test splits (e.g. Algonauts s07, no fMRI) out of train/val
+    is_test = (
+        events["split"].eq("test")
+        if "split" in events.columns
+        else pd.Series(False, index=events.index)
+    )
     events["split"] = events["split_attr"].map(val_to_split)
+    events.loc[is_test, "split"] = "test"
     return events
 
 
