@@ -19,12 +19,12 @@ update = {
     #"infra.slurm_partition": "only-one-gpu", # fix null partition
     "infra.timeout_min": 60 * 24* 2,          # 2 days ( QOS limit )
     #"infra.workdir": None,# neuro data will not be cashed
-    "seed":34 ,  # random seed per model
+    #"seed":34 ,  # random seed per model
 }
 
 grid = {# contains grid of the tribev1
     "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
-    "seed": [34, 35],
+    #"seed": [34, 35],
     #"data.layers_to_use": [[0, 0.2, 0.4, 0.6, 0.8, 1.],[0.5, 0.75, 1.0]] , #[[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1.], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
     #"loss.name": ["MSELoss", "SmoothL1Loss"],#, "HuberLoss"
     #"data.layer_aggregation": ["mean", "group_mean"],
