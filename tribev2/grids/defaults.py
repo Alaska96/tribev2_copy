@@ -18,7 +18,7 @@ BASEDIR = "/scratch_share/islab/Chaima/tribe_v2_work_space"
 CACHEDIR = os.path.join(BASEDIR, "cache_full", PROJECT_NAME)
 SAVEDIR = os.path.join(BASEDIR, "results", PROJECT_NAME)# "results_partial_cache"
 
-N_CPUS = 8#20 # may need to be changed if it violate QOS policy
+N_CPUS = 4#20 # may need to be changed if it violate QOS policy
 
 for path in [CACHEDIR, SAVEDIR, DATADIR]:
     Path(path).mkdir(parents=True, exist_ok=True)
@@ -124,7 +124,7 @@ default_config = {
         "folder": SAVEDIR,
         "gpus_per_node": 1,
         "cpus_per_task": N_CPUS,
-        "mem_gb": 128, # was 64,set back to 128 in the train phase
+        "mem_gb": 64, #  128 ,set back to 128 in the train phase
         "timeout_min": 60 * 24*2,
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
