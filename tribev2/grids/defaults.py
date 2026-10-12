@@ -214,7 +214,7 @@ default_config = {
         "combiner": None,
         "encoder": {
             "depth": 8,
-            "causal": True,
+           # "causal": True,
         },
         "subject_layers": {"subject_dropout": 0.1}, # was 0.1 but set to 0.0 to match paper 
         "subject_embedding": False,# True ,default value was False
