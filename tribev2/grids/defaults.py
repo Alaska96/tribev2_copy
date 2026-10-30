@@ -85,7 +85,7 @@ for extractor in [
     extractor["infra"] = {
         "cluster": "slurm",
         "cpus_per_task": 8,# Number of CPUs per child job(per extractor)
-        "mem_gb": 32, #64 to avoid small default memory amount assignement for child jobs which got them killed (to be double checked)
+        "mem_gb": 128, #64 to avoid small default memory amount assignement for child jobs which got them killed (to be double checked)
         #"slurm_setup": [f"export LD_LIBRARY_PATH={NVIDIA_LIBS}:$LD_LIBRARY_PATH"],# solves cudnn crash for audio extractor,# prepends tribe_v2_env's cuDNN 9.1 to library search path so it is loaded before the system cuDNN 9.0 (which lacks cudnnGetLibConfig)
         "folder": CACHEDIR,
         "keep_in_ram": False, # if True ,extracted features will be loaded to RAM after each extractor finishes, else they will be loaded during training 
@@ -124,7 +124,7 @@ default_config = {
         "folder": SAVEDIR,
         "gpus_per_node": 1,
         "cpus_per_task": N_CPUS,
-        "mem_gb": 64, #  128 ,set back to 128 in the train phase
+        "mem_gb": 128, #  128 ,set back to 128 in the train phase
         "timeout_min": 60 * 24*2,
         "mode": "retry",
         "slurm_constraint": SLURM_CONSTRAINT,
