@@ -31,7 +31,7 @@ text_feature = {
     "frequency": 2, # One embedding per 0.5s
     "contextualized": True,
     "layers": [0, 0.2, 0.4, 0.6, 0.8, 1.0],
-    "batch_size": 4,
+    "batch_size": 1,#4
 }
 image_feature = {
     "name": "HuggingFaceVideo",
@@ -170,9 +170,10 @@ default_config = {
                 "addcontext": {
                     "name": "AddContextToWords",
                     "sentence_only": False,
-                    "max_context_len": 1024,
+                    "max_context_len": None,#1024
                     "split_field": "",
                 },
+                "addepisodecontext": {"name": "AddEpisodeContextToWords"},# new: earlier chunks of the episode
                 "removemissing": {"name": "RemoveMissing"},#drops events with missing data
                 "chunksounds": { #splits long Audio events into 30-60s chunks
                     "name": "ChunkEvents",
