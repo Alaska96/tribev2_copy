@@ -100,40 +100,71 @@ class AddEpisodeContextToWords(EventsTransform):
     subject, same Friends episode or same Movie10 film run) to every word's
     context. Only past words are used.
 
-    Must run right after ``AddContextToWords(max_context_len=None)``, so that the
+    Must run after ``AddContextToWords(max_context_len=None)``, so that the
     context of the last word of a chunk holds that whole chunk.
+
+    Memory: all subjects watched the same clips, so every context exists once per
+    subject. Identical contexts are stored once and shared between subjects,
+    which keeps the (now long) context column about n_subjects times smaller.
+
+    max_prefix_words: if set, only the last N words of the earlier chunks are
+    prepended (bounds the context of long films; Friends episodes are shorter).
     """
 
+    max_prefix_words: int | None = None
+
     def _run(self, events: pd.DataFrame) -> pd.DataFrame:
-        is_word = events.type.isin(ev.EventTypesHelper("Word").names)
-        context = events["context"].fillna("").astype(str)
-        words = events[is_word & (context != "")]
+        is_word = events.type.isin(ev.EventTypesHelper("Word").names).to_numpy()
+        context = events["context"].to_numpy(dtype=object, copy=True)  # non-words keep NaN
+        has_context = events["context"].fillna("").astype(bool).to_numpy()
+        positions = (is_word & has_context).nonzero()[0]
+        timelines = events["timeline"].to_numpy()
 
         # full text of each chunk = context of its last word
+        words = pd.DataFrame({
+            "timeline": timelines[positions],
+            "start": events["start"].to_numpy()[positions],
+            "pos": positions,
+        })
         last = words.sort_values("start").groupby("timeline").tail(1)
-        chunk_text = dict(zip(last.timeline, last.context))
+        chunk_text = {tl: context[p] for tl, p in zip(last.timeline, last.pos)}
+        del words, last
 
         # group the chunks of each timeline into episodes, in viewing order
         cols = [c for c in ("study", "subject", "task", "movie", "chunk", "run") if c in events]
-        meta = events[is_word].groupby("timeline")[cols].first()
+        meta = events.loc[is_word, ["timeline", *cols]].groupby("timeline").first()
         keys = meta.apply(self._episode_and_order, axis=1, result_type="expand")
         meta["episode"], meta["order"] = keys[0], keys[1]
 
+        shared: dict = {}  # one stored copy of each distinct string
         prefixes: dict[str, str] = {}
         for _, episode in meta.sort_values("order").groupby("episode", sort=False):
             past: list[str] = []
             for timeline in episode.index:
-                prefixes[timeline] = " ".join(past)
+                prefix = " ".join(past)
+                if self.max_prefix_words is not None:
+                    prefix = " ".join(prefix.split(" ")[-self.max_prefix_words:]) if prefix else ""
+                prefixes[timeline] = shared.setdefault(prefix, prefix)
                 if chunk_text.get(timeline):
                     past.append(chunk_text[timeline])
+        del chunk_text
 
-        prefix = words.timeline.map(prefixes).fillna("")
-        has_prefix = prefix != ""
-        idx = words.index[has_prefix]
-        events.loc[idx, "context"] = prefix[has_prefix] + " " + words.loc[idx, "context"]
-        logger.info(
-            "Episode context added to %d / %d words (%d episodes)",
-            has_prefix.sum(), len(words), meta.episode.nunique(),
+        n_prefixed = 0
+        for p in positions:
+            prefix = prefixes.get(timelines[p], "")
+            key = (prefix, context[p])
+            new = shared.get(key)
+            if new is None:
+                new = f"{prefix} {context[p]}" if prefix else shared.setdefault(context[p], context[p])
+                shared[key] = new
+            context[p] = new
+            n_prefixed += bool(prefix)
+        del shared
+        # object dtype keeps the shared strings shared (a pandas string dtype would copy them)
+        events["context"] = pd.Series(context, index=events.index, dtype=object)
+        print(
+            f"[AddEpisodeContextToWords] episode context added to {n_prefixed} / "
+            f"{len(positions)} words ({meta.episode.nunique()} episodes)"
         )
         return events
 
