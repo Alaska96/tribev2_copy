@@ -90,6 +90,61 @@ class SplitEvents(EventsTransform):
         events = pd.concat(tmp)
 
         return events
+class AddEpisodeContextToWords(EventsTransform):
+    """Carry word context across the chunks of the same episode.
+
+    ``AddContextToWords`` restarts the context at every timeline, i.e. at every
+    chunk (Friends s01e05a / s01e05b, Movie10 bourne01 / bourne02 ...), so the
+    second half of an episode starts with an empty context. This transform
+    prepends the full text of all *earlier* chunks of the same episode (same
+    subject, same Friends episode or same Movie10 film run) to every word's
+    context. Only past words are used.
+
+    Must run right after ``AddContextToWords(max_context_len=None)``, so that the
+    context of the last word of a chunk holds that whole chunk.
+    """
+
+    def _run(self, events: pd.DataFrame) -> pd.DataFrame:
+        is_word = events.type.isin(ev.EventTypesHelper("Word").names)
+        context = events["context"].fillna("").astype(str)
+        words = events[is_word & (context != "")]
+
+        # full text of each chunk = context of its last word
+        last = words.sort_values("start").groupby("timeline").tail(1)
+        chunk_text = dict(zip(last.timeline, last.context))
+
+        # group the chunks of each timeline into episodes, in viewing order
+        cols = [c for c in ("study", "subject", "task", "movie", "chunk", "run") if c in events]
+        meta = events[is_word].groupby("timeline")[cols].first()
+        keys = meta.apply(self._episode_and_order, axis=1, result_type="expand")
+        meta["episode"], meta["order"] = keys[0], keys[1]
+
+        prefixes: dict[str, str] = {}
+        for _, episode in meta.sort_values("order").groupby("episode", sort=False):
+            past: list[str] = []
+            for timeline in episode.index:
+                prefixes[timeline] = " ".join(past)
+                if chunk_text.get(timeline):
+                    past.append(chunk_text[timeline])
+
+        prefix = words.timeline.map(prefixes).fillna("")
+        has_prefix = prefix != ""
+        idx = words.index[has_prefix]
+        events.loc[idx, "context"] = prefix[has_prefix] + " " + words.loc[idx, "context"]
+        logger.info(
+            "Episode context added to %d / %d words (%d episodes)",
+            has_prefix.sum(), len(words), meta.episode.nunique(),
+        )
+        return events
+
+    @staticmethod
+    def _episode_and_order(row: pd.Series) -> tuple[str, float]:
+        chunk = str(row.get("chunk", ""))
+        base = [str(row.get(c, "")) for c in ("study", "subject", "task", "movie")]
+        if chunk[-1:].isalpha():  # Friends: "e05a" -> episode e05, order a < b < c
+            return "/".join(base + [chunk[:-1]]), float(ord(chunk[-1]))
+        # Movie10: chunks 1, 2, ... of the same film, within the same run
+        return "/".join(base + [f"run-{row.get('run', '')}"]), float(chunk)
 
 
 class ExtractWordsFromAudio(EventsTransform):
