@@ -136,9 +136,9 @@ default_config = {
     },
     "data": {
         "frequency": 2, # 2 embeddings per 1
-        "duration_trs": 100, # segmentation window size in trs
-        "overlap_trs_train": 0, 
-        "overlap_trs_val": 0,
+        "duration_trs": 200, # 100segmentation window size in trs
+        "overlap_trs_train": 0, #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        "overlap_trs_val": 0,#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         "shuffle_val":False, #  True, # False
         "num_workers": N_CPUS,# 
         "layers_to_use": [0.5, 0.75, 1.0],# for feature extractors?
