@@ -170,10 +170,10 @@ default_config = {
                 "addcontext": {
                     "name": "AddContextToWords",
                     "sentence_only": False,
-                    "max_context_len": None,#1024
+                    "max_context_len":1024 ,#None
                     "split_field": "",
                 },
-                "addepisodecontext": {"name": "AddEpisodeContextToWords"},# new: earlier chunks of the episode
+                #"addepisodecontext": {"name": "AddEpisodeContextToWords"},# new: earlier chunks of the episode
                 "removemissing": {"name": "RemoveMissing"},#drops events with missing data
                 "chunksounds": { #splits long Audio events into 30-60s chunks
                     "name": "ChunkEvents",
