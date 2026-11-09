@@ -136,7 +136,7 @@ default_config = {
     },
     "data": {
         "frequency": 2, # 2 embeddings per 1
-        "duration_trs": 200, # 100segmentation window size in trs
+        "duration_trs": 100, # 100segmentation window size in trs
         "overlap_trs_train": 0, #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         "overlap_trs_val": 0,#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         "shuffle_val":False, #  True, # False
