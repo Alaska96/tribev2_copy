@@ -219,7 +219,7 @@ default_config = {
         },
         "subject_layers": {"subject_dropout": 0.1}, # was 0.1 but set to 0.0 to match paper 
         "subject_embedding": False,# True ,default value was False
-        "modality_dropout": 0.4,# was 0.3 and set to 0.2 /0.4 
+        "modality_dropout": 0.0,# was 0.3 and set to 0.4 
     },
     "metrics": [
         {
