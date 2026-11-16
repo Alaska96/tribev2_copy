@@ -215,9 +215,9 @@ default_config = {
         "encoder": {
             "depth": 8,
         },
-        "subject_layers": {"subject_dropout": 0.0}, # was 0.1 but set to 0.0 to match paper 
-        "subject_embedding": True,# default value was False
-        "modality_dropout": 0.2,# was 0.3 and set to 0.2 to match paper description
+        "subject_layers": {"subject_dropout": 0.1}, # was 0.1 but set to 0.0 to match paper 
+        "subject_embedding": False,# default value was False
+        "modality_dropout": 0.0,# 0.4
     },
     "metrics": [
         {
@@ -244,7 +244,7 @@ default_config = {
             "name": "AdamW",# was Adam
             "lr": 1e-4,
             "kwargs": {
-                "weight_decay": 0.0,
+                "weight_decay": 0.1,
             },
         },
         "scheduler": {
