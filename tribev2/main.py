@@ -317,6 +317,9 @@ class TribeExperiment(BaseExperiment):
     # Metrics
     metrics: list[BaseMetric]
     monitor: str = "val/pearson"
+    # Network-specific training: restrict loss/metrics/checkpoint to one Schaefer network (None = full brain)
+    target_network: str | None = None
+    networks_file: str | None = None  # JSON {network: [parcel indices]}
     # Weights & Biases
     wandb_config: WandbLoggerConfig | None = None
     # Hardware
@@ -335,6 +338,7 @@ class TribeExperiment(BaseExperiment):
     checkpoint_filename: str = "best"
     resize_subject_layer: bool = False # ???????????????????????????????
     freeze_backbone: bool = False    # ????????????????????????????????
+    
     # Eval
     average_subjects: bool = False  #?????????????????????????????????????
     checkpoint_path: str | None = None
@@ -351,6 +355,8 @@ class TribeExperiment(BaseExperiment):
 
     def model_post_init(self, __context: tp.Any) -> None: #update trainer params based on the infra configs
         super().model_post_init(__context)
+        if self.target_network is not None and self.networks_file is None:#*
+            raise ValueError("target_network needs networks_file")
         if self.infra.folder is None:
             msg = "infra.folder needs to be specified to save the results."
             raise ValueError(msg)
