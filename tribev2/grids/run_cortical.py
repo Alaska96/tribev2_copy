@@ -51,6 +51,6 @@ if __name__ == "__main__":
         combinatorial=True, # can be set to False since for tribe v1 logic it  will use random sampling as set below
         #n_randomly_sampled=5,#### for tribe v1 logic "ensembling"
         overwrite=False,
-        dry_run=False,
+        dry_run=True,#False
         infra_mode="retry", #resubmit crashed jobs considering cashes, while for #infra_mode="force" :jobs were cancelled before starting
     )
