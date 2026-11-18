@@ -9,6 +9,7 @@
 """This file contains a class that encapsulates the training of fMRI encoding model, connecting configs with data and model architecture, whilst model desing is in model.py"""
 import typing as tp
 import json
+import torch
 from pathlib import Path
 
 import lightning.pytorch as pl
