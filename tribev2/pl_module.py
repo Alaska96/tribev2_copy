@@ -8,6 +8,7 @@
 """
 """This file contains a class that encapsulates the training of fMRI encoding model, connecting configs with data and model architecture, whilst model desing is in model.py"""
 import typing as tp
+import json
 from pathlib import Path
 
 import lightning.pytorch as pl
@@ -40,6 +41,11 @@ class BrainModule(pl.LightningModule):
 
         self.loss = loss
         self.metrics = metrics
+        idx = None
+        if config is not None and config.get("target_network") is not None:
+            with open(config["networks_file"]) as f:
+                idx = torch.tensor(json.load(f)[config["target_network"]], dtype=torch.long)
+        self.register_buffer("target_idx", idx, persistent=False)
 
     def forward(self, batch):
         return self.model(batch)
@@ -56,6 +62,9 @@ class BrainModule(pl.LightningModule):
     ):
         y_true = batch.data["fmri"]  # B, D, T
         y_pred = self.forward(batch)  # B, D, T
+        if self.target_idx is not None:
+            y_true = y_true[:, self.target_idx]
+            y_pred = y_pred[:, self.target_idx]
         if step_name == "val":
             y_true = y_true[:, :, self.config["data.overlap_trs_val"] :]
             y_pred = y_pred[:, :, self.config["data.overlap_trs_val"] :]
