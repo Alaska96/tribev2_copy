@@ -18,12 +18,16 @@ update = {
     "data.neuro.projection": None, # skip projection to use parcellated data instead
     #"infra.slurm_partition": "only-one-gpu", # fix null partition
     "infra.timeout_min": 60 * 24 * 2,          # 2 days ( QOS limit )
+    "brain_model_config.modality_dropout": 0.0,
+    "networks_file": "/scratch_share/islab/Chaima/tribe_v2_work_space/schaefer1000_7net_networks.json",
     #"infra.workdir": None,# neuro data will not be cashed
     #"seed": None,  # random seed per model
 }
 
 grid = {# contains grid of the tribev1
     "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
+    "data.features_to_use": [["text"], ["video"]],
+    "target_network": ["Default", "Cont", "Vis", "DorsAttn"],
     #"data.layers_to_use": [[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1.], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
     #"loss.name": ["MSELoss", "SmoothL1Loss", "HuberLoss"],
     #"data.layer_aggregation": [None, "group_mean"],
