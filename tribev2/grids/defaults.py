@@ -170,7 +170,7 @@ default_config = {
                 "addcontext": {
                     "name": "AddContextToWords",
                     "sentence_only": False,
-                    "max_context_len": 1024,
+                    "max_context_len": None,
                     "split_field": "",
                 },
                 "removemissing": {"name": "RemoveMissing"},#drops events with missing data
