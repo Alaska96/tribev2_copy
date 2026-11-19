@@ -11,7 +11,7 @@ from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config #  light configs for test only 
 from .defaults import default_config 
 from .configs import base_config # this is to select 20 compressed layers from each extractor
-GRID_NAME = "tribe_v2_basline_cortical"
+GRID_NAME = "tribe_v2_network_specific_text_longcontext"#"tribe_v2_network_specific_multimodal"#"tribe_v2_basline_cortical"
 
 update = {
     "wandb_config.group": GRID_NAME,
@@ -22,12 +22,17 @@ update = {
     "networks_file": "/scratch_share/islab/Chaima/tribe_v2_work_space/schaefer1000_7net_networks.json",
     #"infra.workdir": None,# neuro data will not be cashed
     #"seed": None,  # random seed per model
+    "data.study.transforms.addcontext.max_context_len": None,
+    "data.study.transforms.addepisodecontext": {"name": "AddEpisodeContextToWords"},#****
+    "data.text_feature.batch_size": 1,#***
 }
 
 grid = {# contains grid of the tribev1
     "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
-    "data.features_to_use": [["text"], ["video"]],
-    "target_network": ["Default", "Cont", "Vis", "DorsAttn"],
+    "data.features_to_use": [["text"]],
+    "target_network": ["Default", "Cont"],
+    #"data.features_to_use": [["text"], ["video"]],
+    #"target_network": ["Default", "Cont", "Vis", "DorsAttn"],
     #"data.layers_to_use": [[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1.], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
     #"loss.name": ["MSELoss", "SmoothL1Loss", "HuberLoss"],
     #"data.layer_aggregation": [None, "group_mean"],
