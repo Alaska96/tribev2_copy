@@ -27,15 +27,15 @@ update = {
     #"data.text_feature.batch_size": 1,#***
 }
 
-grid = {# contains grid of the tribev1
-    "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
-    "data.features_to_use": [["text"]],
+#grid = {# contains grid of the tribev1
+    #"data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
+   # "data.features_to_use": [["text"]],
     #"target_network": ["Default", "Cont"],
     #"data.features_to_use": [["text", "audio", "video"]],
     #"target_network": ["Default", "Cont", "Vis", "DorsAttn"],
     #"data.features_to_use": [["audio", "video"]],
-    "target_network": ["Default", "Cont"],
-    "data.layers_to_use":[[0, 0.25], [0.25, 0.5], [0.5, 0.75], [0.75, 1.0], [0, 0.2, 0.4, 0.6, 0.8, 1]],
+   # "target_network": ["Default", "Cont"],
+   # "data.layers_to_use":[[0, 0.25], [0.25, 0.5], [0.5, 0.75], [0.75, 1.0], [0, 0.2, 0.4, 0.6, 0.8, 1]],
     #"data.layers_to_use": [[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1], [0, 0.2, 0.4, 0.6, 0.8, 1]],
     #"loss.name": ["MSELoss", "SmoothL1Loss", "HuberLoss"],
     #"data.layer_aggregation": [None, "group_mean"],
@@ -43,8 +43,18 @@ grid = {# contains grid of the tribev1
     #"brain_model_config.extractor_aggregation": ["cat", "sum", "stack"],
     #"brain_model_config.feature_aggregation": ["cat", "sum"],
     #"brain_model_config.modality_dropout": [0.0, 0.2, 0.4],
-}
+#}
 
+
+grid = {
+    "data.study.names": ["Algonauts2025"],
+    "data.features_to_use": [["text"]],
+    #"target_network": ["Default", "Cont"],
+    "target_network": ["Default"],
+    "data.text_feature.model_name": ["meta-llama/Llama-3.2-1B"],
+    #"data.text_feature.model_name": ["meta-llama/Llama-3.2-3B", "meta-llama/Llama-3.2-1B"],
+    #"seed": [33, 34, 35],
+}
 if __name__ == "__main__":
     #updated_config = ConfDict(default_config) # use default_config instead of mini_config
     updated_config = ConfDict(base_config) # use baseconfig
