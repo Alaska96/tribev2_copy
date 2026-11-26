@@ -51,7 +51,7 @@ grid = {
     "data.features_to_use": [["text"]],
     #"target_network": ["Default", "Cont"],
     "target_network": ["Default"],
-    "data.text_feature.model_name": ["meta-llama/Llama-3.2-1B"],
+    #"data.text_feature.model_name": ["meta-llama/Llama-3.2-1B"],
     #"data.text_feature.model_name": ["meta-llama/Llama-3.2-3B", "meta-llama/Llama-3.2-1B"],
     #"seed": [33, 34, 35],
 }
