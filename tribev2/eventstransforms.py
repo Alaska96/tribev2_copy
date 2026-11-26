@@ -359,6 +359,43 @@ class CreateVideosFromImages(EventsTransform):
             events = events.loc[events.type != "Image"]
         return events.reset_index(drop=True)
 
+#*****************************************AddInstruction to word context 
+class AddInstructionToWordContext(EventsTransform):
+    """Prepend a fixed chat-template prefix and an instruction to every word's context.
+
+    Used for the instruction-prompted text runs (C3-C7). The result is
+        <template prefix><instruction>\n\n<the word's normal context>
+    so the target word stays the last token of the context (nothing is appended
+    after it) and the instruction ends up in `context`, which makes every
+    condition get its own feature cache.
+
+    Must run after AddContextToWords.
+    template_prefix: output of diagnostics/render_template_prefix.py, without BOS
+                     if the extractor adds BOS itself.
+    instruction: "" for C3 (empty instruction).
+    """
+
+    template_prefix: str
+    instruction: str = ""
+
+    def _run(self, events: pd.DataFrame) -> pd.DataFrame:
+        is_word = events.type.isin(ev.EventTypesHelper("Word").names).to_numpy()
+        has_context = events["context"].fillna("").astype(bool).to_numpy()
+        head = self.template_prefix + (self.instruction + "\n\n" if self.instruction else "")
+
+        context = events["context"].to_numpy(dtype=object, copy=True)
+        shared: dict[str, str] = {}  # same context for all 4 subjects -> store once
+        positions = (is_word & has_context).nonzero()[0]
+        for p in positions:
+            new = shared.get(context[p])
+            if new is None:
+                new = shared[context[p]] = head + context[p]
+            context[p] = new
+        events["context"] = pd.Series(context, index=events.index, dtype=object)
+        print(f"[AddInstructionToWordContext] prefixed {len(positions)} words, "
+              f"instruction={self.instruction!r}")
+        return events
+
 
 class RemoveDuplicates(EventsTransform):
     subset: str | tp.Sequence[str] = "filepath"
