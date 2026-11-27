@@ -381,8 +381,10 @@ class AddInstructionToWordContext(EventsTransform):
     def _run(self, events: pd.DataFrame) -> pd.DataFrame:
         is_word = events.type.isin(ev.EventTypesHelper("Word").names).to_numpy()
         has_context = events["context"].fillna("").astype(bool).to_numpy()
-        head = self.template_prefix + (self.instruction + "\n\n" if self.instruction else "")
-
+        #head = self.template_prefix + (self.instruction + "\n\n" if self.instruction else "")
+        head = (self.template_prefix
+        + (self.instruction + "\n\n" if self.instruction else "")
+        + "Transcript: ")
         context = events["context"].to_numpy(dtype=object, copy=True)
         shared: dict[str, str] = {}  # same context for all 4 subjects -> store once
         positions = (is_word & has_context).nonzero()[0]
