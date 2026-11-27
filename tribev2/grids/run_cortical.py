@@ -37,17 +37,26 @@ update = {
     #"brain_model_config.layer_aggregation": ["mean", "cat"],
     #"brain_model_config.modality_dropout": [0.0, 0.2, 0.4],
 #}
-grid= {
+#2 grid= {
+   # "seed": [34, 35],
+   # "loss.name": ["SmoothL1Loss"],
+    #"data.layers_to_use": [[0, 0.2, 0.4, 0.6, 0.8, 1]],
+    #"brain_model_config.modality_dropout": [0.4],
+    #"brain_model_config.subject_embedding": [False],
+    #"brain_model_config.subject_layers.subject_dropout": [0.1],
+    #"optim.optimizer.kwargs.weight_decay": [0.01],
+    #"data.shuffle_val": [True],
+#}
+grid = {
     "seed": [34, 35],
-    "loss.name": ["SmoothL1Loss"],
-    "data.layers_to_use": [[0, 0.2, 0.4, 0.6, 0.8, 1]],
-    "brain_model_config.modality_dropout": [0.4],
-    "brain_model_config.subject_embedding": [False],
-    "brain_model_config.subject_layers.subject_dropout": [0.1],
-    "optim.optimizer.kwargs.weight_decay": [0.01],
+    "loss.name": ["MSELoss"],
+    "data.layers_to_use": [[0.5, 0.75, 1.0]],
+    "brain_model_config.modality_dropout": [0.2],
+    "brain_model_config.subject_embedding": [True],
+    "brain_model_config.subject_layers.subject_dropout": [0.0],
+    "optim.optimizer.kwargs.weight_decay": [0.0],
     "data.shuffle_val": [True],
 }
-
 if __name__ == "__main__":
     #updated_config = ConfDict(default_config) # use default_config instead of mini_config
     updated_config = ConfDict(base_config) # use baseconfig
