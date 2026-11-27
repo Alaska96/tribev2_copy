@@ -11,7 +11,7 @@ from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config #  light configs for test only 
 from .defaults import default_config 
 from .configs import base_config # this is to select 20 compressed layers from each extractor
-GRID_NAME = "best variant"
+GRID_NAME = best_variant_seeds"
 
 update = {
     "wandb_config.group": GRID_NAME,
@@ -37,7 +37,7 @@ update = {
     #"brain_model_config.layer_aggregation": ["mean", "cat"],
     #"brain_model_config.modality_dropout": [0.0, 0.2, 0.4],
 #}
- grid= {
+grid= {
     "seed": [34, 35],
     "loss.name": ["SmoothL1Loss"],
     "data.layers_to_use": [[0, 0.2, 0.4, 0.6, 0.8, 1]],
