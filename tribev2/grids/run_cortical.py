@@ -11,7 +11,7 @@ from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config #  light configs for test only 
 from .defaults import default_config 
 from .configs import base_config # this is to select 20 compressed layers from each extractor
-GRID_NAME = "tribe_v2_basline_cortical"
+GRID_NAME = "best variant"
 
 update = {
     "wandb_config.group": GRID_NAME,
@@ -22,9 +22,9 @@ update = {
     #"seed":34 ,  # random seed per model
 }
 
-grid = {# contains grid of the tribev1
-    "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
-    "data.features_to_use": [["text"], ["audio"], ["video"]],
+#grid = {# contains grid of the tribev1
+    #"data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
+    #"data.features_to_use": [["text"], ["audio"], ["video"]],
     #"seed": [34, 35],
     #"data.layers_to_use": [[0, 0.2, 0.4, 0.6, 0.8, 1.],[0.5, 0.75, 1.0]] , #[[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1.], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
     #"loss.name": ["MSELoss", "SmoothL1Loss"],#, "HuberLoss"
@@ -36,6 +36,16 @@ grid = {# contains grid of the tribev1
     #"brain_model_config.feature_aggregation": ["cat", "sum"], #????
     #"brain_model_config.layer_aggregation": ["mean", "cat"],
     #"brain_model_config.modality_dropout": [0.0, 0.2, 0.4],
+#}
+ grid= {
+    "seed": [34, 35],
+    "loss.name": ["SmoothL1Loss"],
+    "data.layers_to_use": [[0, 0.2, 0.4, 0.6, 0.8, 1]],
+    "brain_model_config.modality_dropout": [0.4],
+    "brain_model_config.subject_embedding": [False],
+    "brain_model_config.subject_layers.subject_dropout": [0.1],
+    "optim.optimizer.kwargs.weight_decay": [0.01],
+    "data.shuffle_val": [True],
 }
 
 if __name__ == "__main__":
