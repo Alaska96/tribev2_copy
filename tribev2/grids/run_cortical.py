@@ -11,7 +11,7 @@ from ..main import TribeExperiment  # type: ignore
 from .configs import mini_config #  light configs for test only 
 from .defaults import default_config 
 from .configs import base_config # this is to select 20 compressed layers from each extractor
-GRID_NAME = "best_variant_seeds"
+GRID_NAME = "Full_Brain_MM_1BTextExtr"
 
 update = {
     "wandb_config.group": GRID_NAME,
@@ -25,7 +25,7 @@ update = {
 grid = {# contains grid of the tribev1
     "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
     "data.text_feature.model_name": ["meta-llama/Llama-3.2-1B"],
-    "data.features_to_use": [["text"], ["audio"], ["video"]],
+    #"data.features_to_use": [["text"], ["audio"], ["video"]],
     "brain_model_config.modality_dropout": [0.4],
     "brain_model_config.subject_embedding": [False],
     "brain_model_config.subject_layers.subject_dropout": [0.1],
@@ -62,7 +62,7 @@ grid = {# contains grid of the tribev1
     #"brain_model_config.subject_layers.subject_dropout": [0.0],
     #"optim.optimizer.kwargs.weight_decay": [0.0],
     #"data.shuffle_val": [True],
-}
+#}
 
 
 if __name__ == "__main__":
