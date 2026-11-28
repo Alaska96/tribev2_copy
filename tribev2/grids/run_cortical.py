@@ -22,9 +22,15 @@ update = {
     #"seed":34 ,  # random seed per model
 }
 
-#grid = {# contains grid of the tribev1
-    #"data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
-    #"data.features_to_use": [["text"], ["audio"], ["video"]],
+grid = {# contains grid of the tribev1
+    "data.study.names": ["Algonauts2025"], # Other studies can be added here to be considered # 1st point of coumunct with data
+    "data.text_feature.model_name": ["meta-llama/Llama-3.2-1B"],
+    "data.features_to_use": [["text"], ["audio"], ["video"]],
+    "brain_model_config.modality_dropout": [0.4],
+    "brain_model_config.subject_embedding": [False],
+    "brain_model_config.subject_layers.subject_dropout": [0.1],
+    "optim.optimizer.kwargs.weight_decay": [0.01],
+    "data.shuffle_val": [True],
     #"seed": [34, 35],
     #"data.layers_to_use": [[0, 0.2, 0.4, 0.6, 0.8, 1.],[0.5, 0.75, 1.0]] , #[[0, 0.5, 1], [0.5, 0.75, 1.0], [0.5, 1.], [0, 0.2, 0.4, 0.6, 0.8, 1.]],
     #"loss.name": ["MSELoss", "SmoothL1Loss"],#, "HuberLoss"
@@ -36,7 +42,7 @@ update = {
     #"brain_model_config.feature_aggregation": ["cat", "sum"], #????
     #"brain_model_config.layer_aggregation": ["mean", "cat"],
     #"brain_model_config.modality_dropout": [0.0, 0.2, 0.4],
-#}
+}
 #2 grid= {
    # "seed": [34, 35],
    # "loss.name": ["SmoothL1Loss"],
@@ -47,16 +53,18 @@ update = {
     #"optim.optimizer.kwargs.weight_decay": [0.01],
     #"data.shuffle_val": [True],
 #}
-grid = {
-    "seed": [34, 35],
-    "loss.name": ["MSELoss"],
-    "data.layers_to_use": [[0.5, 0.75, 1.0]],
-    "brain_model_config.modality_dropout": [0.2],
-    "brain_model_config.subject_embedding": [True],
-    "brain_model_config.subject_layers.subject_dropout": [0.0],
-    "optim.optimizer.kwargs.weight_decay": [0.0],
-    "data.shuffle_val": [True],
+#grid = {
+   # "seed": [34, 35],
+    #"loss.name": ["MSELoss"],
+    #"data.layers_to_use": [[0.5, 0.75, 1.0]],
+    #"brain_model_config.modality_dropout": [0.2],
+   # "brain_model_config.subject_embedding": [True],
+    #"brain_model_config.subject_layers.subject_dropout": [0.0],
+    #"optim.optimizer.kwargs.weight_decay": [0.0],
+    #"data.shuffle_val": [True],
 }
+
+
 if __name__ == "__main__":
     #updated_config = ConfDict(default_config) # use default_config instead of mini_config
     updated_config = ConfDict(base_config) # use baseconfig
